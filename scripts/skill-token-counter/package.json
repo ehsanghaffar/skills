@@ -1,0 +1,13 @@
+{
+  "name": "skill-token-counter",
+  "version": "0.1.0",
+  "description": "A simple script to count the number of tokens in a given text using the Google Generative AI API.",
+  "main": "index.js",
+  "scripts": {
+    "count": "node index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  },
+  "type": "module"
+}
