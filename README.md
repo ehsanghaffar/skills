@@ -11,3 +11,7 @@ No need to lock yourself into one methodology. Use whatever works, combine thing
 They’re built around practical software engineering principles and years of experience—not around a single “correct” way of working with agents.
 
 Take them, break them, tweak them, and make them yours.
+
+## Skills
+
+- [**telegram-persian-enforcer**](https://github.com/YOUR_ORG/YOUR_REPO/blob/main/skills/telegram-persian-enforcer/SKILLS.md): Enforce Persian output for all Telegram group, channel, and DM interactions.
