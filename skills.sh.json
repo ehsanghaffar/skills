@@ -1,0 +1,16 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "productivity",
+      "description": "Skills that help you be more productive and efficient in your work.",
+      "skills": ["obsidian-doc-workflow"]
+    },
+    {
+      "title": "communication",
+      "description": "Skills that help you communicate effectively with others.",
+      "skills": ["telegram-persian-enforcer"]
+    }
+  ]
+}
