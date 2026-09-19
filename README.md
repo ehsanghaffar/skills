@@ -14,4 +14,5 @@ Take them, break them, tweak them, and make them yours.
 
 ## Skills
 
-- [**telegram-persian-enforcer**](https://github.com/YOUR_ORG/YOUR_REPO/blob/main/skills/telegram-persian-enforcer/SKILLS.md): Enforce Persian output for all Telegram group, channel, and DM interactions.
+- [**obsidian-doc-workflow**](https://github.com/ehsanghaffar/skills/blob/main/skills/obsidian-doc-workflow/SKILLS.md): Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
+- [**telegram-persian-enforcer**](https://github.com/ehsanghaffar/skills/blob/main/skills/telegram-persian-enforcer/SKILLS.md): Enforce Persian output for all Telegram group, channel, and DM interactions.
