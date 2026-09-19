@@ -14,5 +14,6 @@ Take them, break them, tweak them, and make them yours.
 
 ## Skills
 
-- [**obsidian-doc-workflow**](https://github.com/ehsanghaffar/skills/blob/main/skills/obsidian-doc-workflow/SKILLS.md): Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
-- [**telegram-persian-enforcer**](https://github.com/ehsanghaffar/skills/blob/main/skills/telegram-persian-enforcer/SKILLS.md): Enforce Persian output for all Telegram group, channel, and DM interactions.
+- [**iran-finance-markets-monitor**](https://github.com/YOUR_ORG/YOUR_REPO/blob/main/skills/iran-finance-markets-monitor/SKILLS.md): "Use whenever a user asks to monitor, collect, validate, compare, summarize, or report Iranian financial markets, including USD/IRR or USD/Toman, EUR, AED, gold, Emami coin, Nima, USDT/Toman, crypto prices, Fear & Greed, TGJU, Nobitex, Wallex, Bitpin, or a Persian market report. Collect provenance-rich partial data, never invent missing values, and report source failures explicitly."
+- [**obsidian-doc-workflow**](https://github.com/YOUR_ORG/YOUR_REPO/blob/main/skills/obsidian-doc-workflow/SKILLS.md): Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
+- [**telegram-persian-enforcer**](https://github.com/YOUR_ORG/YOUR_REPO/blob/main/skills/telegram-persian-enforcer/SKILLS.md): Enforce Persian output for all Telegram group, channel, and DM interactions.

@@ -11,6 +11,11 @@
       "title": "communication",
       "description": "Skills that help you communicate effectively with others.",
       "skills": ["telegram-persian-enforcer"]
+    },
+    {
+      "title": "marketing",
+      "description": "Skills that monitor Iranian financial markets and related information.",
+      "skills": ["iran-finance-markets-monitor"]
     }
   ]
 }
