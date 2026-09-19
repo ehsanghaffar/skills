@@ -1,6 +1,7 @@
 ---
 name: telegram-persian-enforcer
 description: Enforce Persian output for all Telegram group, channel, and DM interactions.
+version: 1.0.1
 metadata:
   compatibility: Requires a Telegram integration or Telegram-facing workflow.
   openclaw:

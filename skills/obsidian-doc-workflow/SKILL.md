@@ -1,7 +1,7 @@
 ---
 name: obsidian-doc-workflow
 description: Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
-version: 1.0.0
+version: 1.0.1
 metadata:
   openclaw:
     requires:
