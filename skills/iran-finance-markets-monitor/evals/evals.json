@@ -1,0 +1,23 @@
+{
+  "skill_name": "iran-finance-markets-monitor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Collect today's Iranian market snapshot and write a neutral Persian report. Include USD/Toman, EUR, AED, 18K gold, Emami coin, USDT/Toman, BTC, ETH, Fear & Greed, sources, and clearly mark unavailable data.",
+      "expected_output": "A provenance-rich Persian report or partial-data explanation; no invented values or investment advice.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The TGJU page has Persian digits, a stale date, and multiple rows containing the word دلار. Debug the monitor so it selects the exact free-dollar row, rejects stale data, converts Rial to Toman once, and preserves other source data if TGJU fails.",
+      "expected_output": "Exact-label matching, Persian-digit support, freshness rejection, explicit errors, and partial-result behavior.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review the Iran market monitor for production readiness. Add deterministic tests for parsing and validation, bounded retries, structured errors, timezone correctness, and a documented CLI/output schema.",
+      "expected_output": "Focused tests and documentation covering offline behavior, operational failures, and the JSON contract.",
+      "files": []
+    }
+  ]
+}

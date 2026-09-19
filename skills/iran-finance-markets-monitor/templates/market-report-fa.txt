@@ -1,0 +1,21 @@
+📊 گزارش روزانه بازار | {{date_jalali}} | {{day_of_week}}
+
+🪙 ارزهای دیجیتال
+• بیت‌کوین: ${{btc_price}} ({{btc_change}}%)
+• اتریوم: ${{eth_price}} ({{eth_change}}%)
+• تتر: {{usdt_toman}} تومان ({{usdt_change}}%)
+• شاخص ترس و طمع: {{fng_value}} ({{fng_label}})
+
+💵 ارز و طلا (ایران)
+• دلار آزاد: {{usd_free}} تومان ({{usd_change}}%)
+• یورو: {{eur}} تومان | درهم: {{aed}} تومان
+• سکه امامی: {{sekkeh}} تومان | طلا ۱۸ عیار: {{gold_18k}} تومان
+
+📰 اخبار کلیدی
+• {{news_1_title}} ({{news_1_source}})
+• {{news_2_title}} ({{news_2_source}})
+
+🧭 خلاصه بازار
+{{summary_analysis}}
+
+⏰ زمان تهیه گزارش: {{timestamp}} به وقت تهران
