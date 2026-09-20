@@ -1,6 +1,7 @@
 ---
 name: digikala
 description: Integrate with Digikala Marketplace Open API for seller operations. Use when users need to manage products, upload images, search categories, handle orders, or automate seller workflows on Digikala (Iran's largest e-commerce platform). Trigger phrases: "Digikala API", "seller.digikala.com", "marketplace API", "Iran e-commerce", "product creation Digikala", "Digikala seller panel".
+version: 0.1.1
 ---
 
 # Digikala Marketplace API Skill
