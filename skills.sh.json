@@ -13,9 +13,14 @@
       "skills": ["telegram-persian-enforcer"]
     },
     {
-      "title": "marketing",
+      "title": "finance",
       "description": "Skills that monitor Iranian financial markets and related information.",
       "skills": ["iran-finance-markets-monitor"]
+    },
+    {
+      "title": "lifestyle",
+      "description": "Skills that help you improve your lifestyle and well-being.",
+      "skills": ["digikala"]
     }
   ]
 }
