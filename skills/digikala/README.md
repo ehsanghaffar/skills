@@ -5,7 +5,6 @@ A comprehensive skill for integrating with the **Digikala Marketplace Open API**
 ## Overview
 
 This skill enables seamless interaction with Digikala's seller API for:
-- **Authentication** - OAuth2-style token management
 - **Product Management** - Full product creation pipeline (search → validate → create → assign)
 - **Category Navigation** - Tree browsing, keyword search, validation
 - **Image Handling** - Upload to temp storage, AI quality checks
@@ -32,10 +31,16 @@ mkdir -p ~/.claude/skills/digikala
 ## Quick Start
 
 1. **Register a Client** with Digikala (contact `Marketplace-API@digikala.com`)
-2. **Get Authorization Code** by redirecting seller to Digikala for approval
-3. **Exchange for Tokens**:
+2. **Obtain Access Token** from Digikala seller panel or OAuth flow
+3. **Provide Token** (choose one):
    ```bash
-   bash ~/.claude/skills/digikala/scripts/auth.sh get-token "your_auth_code_here"
+   # Option A: Environment variable
+   export DIGIKALA_ACCESS_TOKEN="your_access_token_here"
+   
+   # Option B: Token file (recommended for persistence)
+   mkdir -p ~/.digikala
+   echo "your_access_token_here" > ~/.digikala/token
+   chmod 600 ~/.digikala/token
    ```
 4. **Start Using the API**:
    ```bash
@@ -47,16 +52,6 @@ mkdir -p ~/.claude/skills/digikala
    ```
 
 ## Scripts Reference
-
-### Authentication (`auth.sh`)
-| Command | Description |
-|---------|-------------|
-| `get-token <auth_code>` | Exchange authorization code for access/refresh tokens |
-| `refresh` | Refresh expired access token using refresh token |
-| `revoke` | Revoke current token and clear local config |
-| `scopes [client_code]` | List all scopes or scopes for specific client |
-
-**Config stored at**: `~/.digikala/config.json`
 
 ### Product Creation (`product-create.sh`)
 | Command | Description |
@@ -157,17 +152,24 @@ bash product-create.sh save-product '{
 bash product-create.sh assign 99999
 ```
 
-## Configuration
+## Token Management
 
-The skill stores tokens in `~/.digikala/config.json`:
-```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "refresh_token": "WQ098gF5PG3salmqewqvfbgxzzgTgAmWvkrQaWkgnpiqky1KAoqnxunQBz09Xc5UI1eg9tSo1h6k1"
-}
+**No token storage by scripts.** You manage tokens manually:
+
+```bash
+# Environment variable (per session)
+export DIGIKALA_ACCESS_TOKEN="your_token"
+
+# Persistent file (recommended)
+mkdir -p ~/.digikala
+echo "your_token" > ~/.digikala/token
+chmod 600 ~/.digikala/token
 ```
 
-**Security**: This file contains sensitive tokens. Ensure proper file permissions (600).
+- Scripts read token from `DIGIKALA_ACCESS_TOKEN` env var first, then `~/.digikala/token`
+- **Never commit tokens to version control**
+- Rotate tokens periodically via Digikala seller panel
+- Tokens expire — renew before expiration
 
 ## API Reference
 
@@ -179,8 +181,8 @@ See [references/endpoints.md](references/endpoints.md) for the complete list of 
 |-----------|---------|--------|
 | 200 | Success | Process response |
 | 400 | Validation Error | Check `errors` field in response |
-| 401 | Unauthorized | Run `auth.sh refresh` |
-| 403 | Forbidden | Check scopes via `auth.sh scopes` |
+| 401 | Unauthorized | Update `DIGIKALA_ACCESS_TOKEN` or `~/.digikala/token` |
+| 403 | Forbidden | Check scopes via `/auth/scopes/{client_code}` |
 | 404 | Not Found | Verify IDs |
 | 429 | Rate Limited | Wait for `reset_time` header |
 | 500 | Server Error | Retry, contact support if persistent |

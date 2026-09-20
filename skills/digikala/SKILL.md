@@ -1,15 +1,15 @@
 ---
 name: digikala
-description: Integrate with Digikala Marketplace Open API for seller operations. Use when users need to authenticate, manage products, upload images, search categories, handle orders, or automate seller workflows on Digikala (Iran's largest e-commerce platform). Trigger phrases: "Digikala API", "seller.digikala.com", "marketplace API", "Iran e-commerce", "product creation Digikala", "Digikala seller panel".
+description: Integrate with Digikala Marketplace Open API for seller operations. Use when users need to manage products, upload images, search categories, handle orders, or automate seller workflows on Digikala (Iran's largest e-commerce platform). Trigger phrases: "Digikala API", "seller.digikala.com", "marketplace API", "Iran e-commerce", "product creation Digikala", "Digikala seller panel".
 ---
 
 # Digikala Marketplace API Skill
 
-This skill enables Claude to work with the **Digikala Marketplace Open API** (seller.digikala.com) — Iran's largest e-commerce platform's seller API with 274 endpoints covering authentication, product management, categories, orders, shipments, finance, and more.
+This skill enables Claude to work with the **Digikala Marketplace Open API** (seller.digikala.com) — Iran's largest e-commerce platform's seller API with 274 endpoints covering product management, categories, orders, shipments, finance, and more.
 
 ## How It Works
 
-1. **Authentication Flow**: OAuth2-style flow with authorization_code → access_token + refresh_token → token refresh → revoke
+1. **Authentication**: Provide access token via `DIGIKALA_ACCESS_TOKEN` env var or `~/.digikala/token` file (user-managed)
 2. **Product Creation Pipeline**: Search existing products → validate category/attributes → create draft → upload images → AI image validation → save title → save product → assign to seller
 3. **Category Navigation**: Tree browsing, search by keyword, validation for product creation
 4. **Image Management**: Upload to temp storage → AI quality check → attach to products
@@ -28,15 +28,6 @@ Authorization: Bearer <access_token>
 **Rate Limits**: 429 response with `reset_time` header when exceeded
 
 ## Key Endpoints by Domain
-
-### Authentication (5 endpoints)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/auth/scopes` | List all defined scopes |
-| GET | `/auth/scopes/{client_code}` | List scopes available for your app |
-| POST | `/auth/token` | Exchange authorization_code for tokens |
-| POST | `/auth/refresh-token` | Refresh expired access_token |
-| POST | `/auth/revoke` | Revoke seller access token |
 
 ### Category (1 endpoint)
 | Method | Endpoint | Description |
@@ -69,9 +60,6 @@ Authorization: Bearer <access_token>
 ## Usage
 
 ```bash
-# Authentication helper
-bash /mnt/skills/user/digikala/scripts/auth.sh <command> [args]
-
 # Product creation workflow
 bash /mnt/skills/user/digikala/scripts/product-create.sh <step> [args]
 
@@ -86,15 +74,15 @@ bash /mnt/skills/user/digikala/scripts/image.sh <command> [args]
 
 | Script | Commands | Description |
 |--------|----------|-------------|
-| `auth.sh` | `get-token`, `refresh`, `revoke`, `scopes` | Handle OAuth flow |
-| `product-create.sh` | `search`, `validate-category`, `create-draft`, `upload-image`, `ai-check`, `save-title`, `save-product`, `assign` | Full product pipeline |
+| `product-create.sh` | `search`, `validate-category`, `save-title`, `save-product`, `assign`, `brand-request` | Full product pipeline |
 | `category.sh` | `tree`, `search`, `validate` | Category navigation |
 | `image.sh` | `upload-product`, `upload-request`, `upload-brand`, `ai-check` | Image operations |
 
 **Examples:**
 ```bash
-# Get access token after seller authorization
-bash /mnt/skills/user/digikala/scripts/auth.sh get-token "auth_code_here"
+# Set token (one time)
+export DIGIKALA_ACCESS_TOKEN="your_access_token_here"
+# OR: echo "your_access_token_here" > ~/.digikala/token
 
 # Search products to sell
 bash /mnt/skills/user/digikala/scripts/product-create.sh search "iPhone 15"
@@ -115,19 +103,6 @@ bash /mnt/skills/user/digikala/scripts/product-create.sh save-title 123 "گوش�
 ## Output
 
 All scripts output JSON to stdout. Example responses:
-
-**Auth Token Response:**
-```json
-{
-  "status": "ok",
-  "data": {
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-    "refresh_token": "WQ098gF5PG3salmqewqvfbgxzzgTgAmWvkrQaWkgnpiqky1KAoqnxunQBz09Xc5UI1eg9tSo1h6k1",
-    "access_token_expires_at": {"date": "2025-02-07 00:00:00.000000", "timezone": "Asia/Tehran"},
-    "refresh_token_expires_at": {"date": "2025-03-09 00:00:00.000000", "timezone": "Asia/Tehran"}
-  }
-}
-```
 
 **Product Search Response:**
 ```json
@@ -175,7 +150,7 @@ When presenting API results to users, format as:
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| 401 Unauthorized | Invalid/expired token | Run `auth.sh refresh` with refresh_token |
+| 401 Unauthorized | Invalid/expired token | Update `DIGIKALA_ACCESS_TOKEN` or `~/.digikala/token` |
 | 403 Forbidden | Missing scope | Check `/auth/scopes/{client_code}` for available scopes |
 | 404 Not Found | Wrong ID or resource doesn't exist | Verify product/category IDs |
 | 429 Too Many Requests | Rate limit exceeded | Wait for `reset_time` or implement backoff |
@@ -190,3 +165,4 @@ When presenting API results to users, format as:
 - **Scopes Required**: Each endpoint needs specific scope — check `/auth/scopes/{client_code}` for your app's permissions
 - **Image URLs**: Temp images expire; use `use_temp_images: true` in product save to reference them
 - **Commission Rates**: Vary by category; check `/product-creation/be-seller/{id}` before listing
+- **Token Management**: Tokens are NOT stored by scripts. Provide via `DIGIKALA_ACCESS_TOKEN` env var or `~/.digikala/token` file (chmod 600 recommended)
