@@ -2,26 +2,35 @@
 set -e
 
 BASE_URL="https://seller.digikala.com/open-api/v1"
-CONFIG_FILE="${HOME}/.digikala/config.json"
 
-load_config() {
-    if [[ -f "$CONFIG_FILE" ]]; then
-        cat "$CONFIG_FILE"
-    else
-        echo '{}'
+# Token must be provided via DIGIKALA_ACCESS_TOKEN environment variable
+# or ~/.digikala/token file (user-managed)
+get_access_token() {
+    # Priority 1: Environment variable
+    if [[ -n "${DIGIKALA_ACCESS_TOKEN:-}" ]]; then
+        echo "${DIGIKALA_ACCESS_TOKEN}"
+        return 0
     fi
+    
+    # Priority 2: User-managed token file
+    local token_file="${HOME}/.digikala/token"
+    if [[ -f "$token_file" ]]; then
+        cat "$token_file"
+        return 0
+    fi
+    
+    echo "Error: No access token found." >&2
+    echo "Provide token via DIGIKALA_ACCESS_TOKEN env var or ~/.digikala/token file" >&2
+    exit 1
 }
 
+# Get auth header
 get_auth_header() {
-    local config=$(load_config)
-    local access_token=$(echo "$config" | jq -r '.access_token // empty')
-    if [[ -z "$access_token" ]]; then
-        echo "Error: No access token. Run 'auth.sh get-token' first." >&2
-        exit 1
-    fi
-    echo "Authorization: Bearer $access_token"
+    local token=$(get_access_token)
+    echo "Authorization: Bearer $token"
 }
 
+# Make API request
 api_request() {
     local method="$1"
     local endpoint="$2"
@@ -42,6 +51,20 @@ api_request() {
             -H "$auth_header" \
             "$BASE_URL$endpoint"
     fi
+}
+
+# Handle multipart upload
+api_upload() {
+    local endpoint="$1"
+    local file_path="$2"
+    local field_name="${3:-file}"
+    
+    local auth_header=$(get_auth_header)
+    
+    curl -s -X POST \
+        -H "$auth_header" \
+        -F "${field_name}=@${file_path}" \
+        "$BASE_URL$endpoint"
 }
 
 case "${1:-}" in
@@ -93,18 +116,6 @@ case "${1:-}" in
             exit 1
         fi
         api_request GET "/product-creation/category/$category_id/validation"
-        ;;
-    
-    validate-detail)
-        # Required: category_id, division_id, model, brand_id
-        # Optional: product_type_ids[], color_id, is_iranian, product_classes[], fake, fake_reasons[], mefa_ids
-        cat <<'EOF' >&2
-Usage: $0 validate-detail <json_data>
-Required fields: category_id, division_id, model, brand_id
-Example:
-  $0 validate-detail '{"category_id":123,"division_id":456,"model":"iPhone 15","brand_id":789,"is_iranian":false}'
-EOF
-        exit 1
         ;;
     
     validate-detail)
@@ -193,6 +204,7 @@ EOF
         if [[ -z "$data" ]]; then
             echo "Usage: $0 save-product '<json_data>'" >&2
             echo "Required: category_id, draft_product_id, photos_detail{main_image,order,images[]}, use_temp_images, only_b2b" >&2
+            echo "WARNING: This creates/updates a live product on Digikala." >&2
             exit 1
         fi
         api_request POST "/product-creation/save" "$data"
@@ -202,6 +214,7 @@ EOF
         product_id="${2:-}"
         if [[ -z "$product_id" ]]; then
             echo "Usage: $0 assign <product_id>" >&2
+            echo "WARNING: This assigns a product to your seller account." >&2
             exit 1
         fi
         data=$(jq -n --argjson product_id "$product_id" '{productId: $product_id}')
@@ -213,6 +226,7 @@ EOF
         if [[ -z "$data" ]]; then
             echo "Usage: $0 brand-request '<json_data>'" >&2
             echo "Required: brand_origin, description, logo_id, name_en, name_fa, iranian_registration_url, category_id" >&2
+            echo "WARNING: This submits a brand registration request." >&2
             exit 1
         fi
         api_request POST "/product-creation/brand/request" "$data"
@@ -220,6 +234,8 @@ EOF
     
     *)
         echo "Usage: $0 {search|suggest|be-seller|search-category|validate-category|validate-detail|draft-count|get-draft|auto-title|save-title|get-attributes|validate-attributes|save-product|assign|brand-request} [args]" >&2
+        echo "" >&2
+        echo "Authentication: Set DIGIKALA_ACCESS_TOKEN env var or create ~/.digikala/token file" >&2
         exit 1
         ;;
 esac

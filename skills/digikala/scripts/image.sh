@@ -2,24 +2,29 @@
 set -e
 
 BASE_URL="https://seller.digikala.com/open-api/v1"
-CONFIG_FILE="${HOME}/.digikala/config.json"
 
-load_config() {
-    if [[ -f "$CONFIG_FILE" ]]; then
-        cat "$CONFIG_FILE"
-    else
-        echo '{}'
+# Token must be provided via DIGIKALA_ACCESS_TOKEN environment variable
+# or ~/.digikala/token file (user-managed)
+get_access_token() {
+    if [[ -n "${DIGIKALA_ACCESS_TOKEN:-}" ]]; then
+        echo "${DIGIKALA_ACCESS_TOKEN}"
+        return 0
     fi
+    
+    local token_file="${HOME}/.digikala/token"
+    if [[ -f "$token_file" ]]; then
+        cat "$token_file"
+        return 0
+    fi
+    
+    echo "Error: No access token found." >&2
+    echo "Provide token via DIGIKALA_ACCESS_TOKEN env var or ~/.digikala/token file" >&2
+    exit 1
 }
 
 get_auth_header() {
-    local config=$(load_config)
-    local access_token=$(echo "$config" | jq -r '.access_token // empty')
-    if [[ -z "$access_token" ]]; then
-        echo "Error: No access token. Run 'auth.sh get-token' first." >&2
-        exit 1
-    fi
-    echo "Authorization: Bearer $access_token"
+    local token=$(get_access_token)
+    echo "Authorization: Bearer $token"
 }
 
 api_upload() {
@@ -107,6 +112,8 @@ case "${1:-}" in
         echo "  upload-request <file>     - Upload content request image" >&2
         echo "  upload-brand <file>       - Upload brand logo image" >&2
         echo "  ai-check <image_id> [is_main] - AI quality check on uploaded image" >&2
+        echo "" >&2
+        echo "Authentication: Set DIGIKALA_ACCESS_TOKEN env var or create ~/.digikala/token file" >&2
         exit 1
         ;;
 esac
