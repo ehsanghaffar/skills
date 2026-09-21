@@ -204,7 +204,17 @@ case "${1:-}" in
         if [[ -z "$data" ]]; then
             echo "Usage: $0 save-product '<json_data>'" >&2
             echo "Required: category_id, draft_product_id, photos_detail{main_image,order,images[]}, use_temp_images, only_b2b" >&2
-            echo "WARNING: This creates/updates a live product on Digikala." >&2
+            echo "" >&2
+            echo "⚠️  WARNING: This creates/updates a LIVE PRODUCT on Digikala marketplace." >&2
+            echo "   This action is visible to customers and affects your seller account." >&2
+            echo "   Review the JSON payload carefully before proceeding." >&2
+            exit 1
+        fi
+        echo "⚠️  About to create/update a live product on Digikala." >&2
+        read -p "Confirm? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Aborted." >&2
             exit 1
         fi
         api_request POST "/product-creation/save" "$data"
@@ -214,7 +224,16 @@ case "${1:-}" in
         product_id="${2:-}"
         if [[ -z "$product_id" ]]; then
             echo "Usage: $0 assign <product_id>" >&2
-            echo "WARNING: This assigns a product to your seller account." >&2
+            echo "" >&2
+            echo "⚠️  WARNING: This assigns a product to YOUR SELLER ACCOUNT." >&2
+            echo "   This action modifies your seller inventory on Digikala." >&2
+            exit 1
+        fi
+        echo "⚠️  About to assign product $product_id to your seller account." >&2
+        read -p "Confirm? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Aborted." >&2
             exit 1
         fi
         data=$(jq -n --argjson product_id "$product_id" '{productId: $product_id}')
@@ -226,7 +245,16 @@ case "${1:-}" in
         if [[ -z "$data" ]]; then
             echo "Usage: $0 brand-request '<json_data>'" >&2
             echo "Required: brand_origin, description, logo_id, name_en, name_fa, iranian_registration_url, category_id" >&2
-            echo "WARNING: This submits a brand registration request." >&2
+            echo "" >&2
+            echo "⚠️  WARNING: This submits a BRAND REGISTRATION REQUEST to Digikala." >&2
+            echo "   This requires manual review by Digikala team." >&2
+            exit 1
+        fi
+        echo "⚠️  About to submit a brand registration request." >&2
+        read -p "Confirm? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Aborted." >&2
             exit 1
         fi
         api_request POST "/product-creation/brand/request" "$data"
