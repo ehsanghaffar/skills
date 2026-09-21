@@ -11,6 +11,17 @@
 
 مارکت‌پلیس دیجی‌کالا بزرگ‌ترین پلتفرم تجارت الکترونیک ایران است. این مهارت دسترسی کامل به **۲۷۴ نقطه پایانی (endpoint)** API باز فروشندگان را فراهم می‌کند.
 
+#### ⚠️ اطلاعیه ایمنی
+**این مهارت با مارکت‌پلیس زنده (production) دیجی‌کالا تعامل دارد.** عملیات بر اساس تأثیر دسته‌بندی شده‌اند:
+
+| دسته‌بندی | دستورات | ریسک | تأیید |
+|-----------|----------|------|-------|
+| **فقط خواندن** (READ-ONLY) | `search`, `suggest`, `be-seller`, `validate-*`, `get-*`, `draft-count`, `auto-title`, `get-attributes`, `tree`, `ai-check` | هیچ‌یک - هر زمان قابل اجرا | خیر |
+| **نوشتن** (WRITE) | `save-title`, `upload-*` | تغییر داده‌های ریموت (تصاویر، عناوین) | قبل از اجرا بررسی کنید |
+| **تغییر حالت** (STATE-CHANGING) | `save-product`, `assign`, `brand-request` | **تأثیر بر مارکت‌پلیس زنده و اکانت فروشنده** | ✅ اسکریپت‌ها از کاربر می‌پرسند `y/N` |
+
+> **همیشه ابتدا با [Sandbox](https://github.com/salimousavi/seller_service_sandbox) تست کنید.**
+
 #### قابلیت‌ها:
 - **مدیریت توکن**: توکن دستی از طریق متغیر محیطی `DIGIKALA_ACCESS_TOKEN` یا فایل `~/.digikala/token`
 - **مدیریت محصول**: جستجو، اعتبارسنجی دسته‌بندی، ایجاد پیش‌نویس، آپلود تصاویر، بررسی کیفیت با هوش مصنوعی، ذخیره و تخصیص به فروشنده
@@ -24,18 +35,19 @@
 export DIGIKALA_ACCESS_TOKEN="توکن_دسترسی_شما"
 # یا: echo "توکن_دسترسی_شما" > ~/.digikala/token && chmod 600 ~/.digikala/token
 
-# محصولات
+# ✅ فقط خواندن - безопас برای اجرا
 bash scripts/product-create.sh search "آیفون ۱۵"
 bash scripts/product-create.sh validate-category 6351
-bash scripts/product-create.sh save-title 123 "گوشی موبایل اپل آیفون ۱۵"
-
-# دسته‌بندی‌ها
 bash scripts/category.sh tree
-bash scripts/category.sh search "موبایل"
-
-# تصاویر
-bash scripts/image.sh upload-product ./product.jpg
 bash scripts/image.sh ai-check "img_abc123" true
+
+# 🟡 نوشتن - قبل از اجرا بررسی کنید
+bash scripts/product-create.sh save-title 123 "گوشی موبایل اپل آیفون ۱۵"
+bash scripts/image.sh upload-product ./product.jpg
+
+# 🔴 تغییر حالت - اسکریپت تأیید می‌خواهد (y/N)
+bash scripts/product-create.sh save-product '{"category_id":123,"draft_product_id":456,...}'
+bash scripts/product-create.sh assign 789
 ```
 
 #### نکات مهم:
@@ -45,6 +57,7 @@ bash scripts/image.sh ai-check "img_abc123" true
 - تصاویر موقت منقضی می‌شوند؛ از `use_temp_images: true` در ذخیره محصول استفاده کنید
 - نرخ کمیسیون حسب دسته‌بندی متغیر است
 - **توکن‌ها توسط اسکریپت‌ها ذخیره نمی‌شوند؛ از متغیر محیطی یا فایل توکن استفاده کنید**
+- **فایل توکن باید `chmod 600` باشد (فقط مالک خواندن/نوشتن)**
 - محیط Sandbox برای توسعه: https://github.com/salimousavi/seller_service_sandbox
 
 ---
