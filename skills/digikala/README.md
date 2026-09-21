@@ -2,6 +2,18 @@
 
 A comprehensive skill for integrating with the **Digikala Marketplace Open API** (seller.digikala.com) — Iran's largest e-commerce platform's seller API with 274 endpoints.
 
+## ⚠️ Safety Notice
+
+**This skill interacts with a LIVE production marketplace.** Operations are classified by impact:
+
+| Classification | Commands | Risk | Confirmation |
+|----------------|----------|------|--------------|
+| **READ-ONLY** | `search`, `suggest`, `be-seller`, `validate-*`, `get-*`, `draft-count`, `auto-title`, `get-attributes`, `tree`, `ai-check` | None - safe to run anytime | No |
+| **WRITE** | `save-title`, `upload-*` | Modifies remote data (images, titles) | Review before running |
+| **STATE-CHANGING** | `save-product`, `assign`, `brand-request` | **Affects live marketplace & seller account** | ✅ Scripts prompt `y/N` |
+
+> **Always test with the [Sandbox](https://github.com/salimousavi/seller_service_sandbox) first.**
+
 ## Overview
 
 This skill enables seamless interaction with Digikala's seller API for:
@@ -53,39 +65,44 @@ mkdir -p ~/.claude/skills/digikala
 
 ## Scripts Reference
 
+### Operation Classification Legend
+- 🟢 **READ-ONLY** — Safe, no side effects
+- 🟡 **WRITE** — Modifies remote data (review before running)
+- 🔴 **STATE-CHANGING** — Affects live marketplace (prompts for confirmation)
+
 ### Product Creation (`product-create.sh`)
-| Command | Description |
-|---------|-------------|
-| `search <keyword> [categories] [brands] [statuses]` | Search existing products |
-| `suggest <keyword>` | Get product suggestions for selling |
-| `be-seller <product_id>` | Check if can sell product, get commission rate |
-| `search-category <keyword>` | Find categories by keyword |
-| `validate-category <category_id>` | Validate category & get required attributes |
-| `validate-detail <json>` | Validate product details |
-| `draft-count` | Count draft products |
-| `get-draft <id>` | Get draft product details |
-| `auto-title <draft_id>` | Get AI-generated title suggestion |
-| `save-title <draft_id> <title_fa> [title_en] [desc] [advantages] [disadvantages]` | Save/validate title |
-| `get-attributes <category_id>` | Get category attributes |
-| `validate-attributes <json>` | Validate product attributes |
-| `save-product <json>` | Create/save product |
-| `assign <product_id>` | Assign product to seller |
-| `brand-request <json>` | Request new brand |
+| Command | Type | Description |
+|---------|------|-------------|
+| `search <keyword> [categories] [brands] [statuses]` | 🟢 | Search existing products |
+| `suggest <keyword>` | 🟢 | Get product suggestions for selling |
+| `be-seller <product_id>` | 🟢 | Check if can sell product, get commission rate |
+| `search-category <keyword>` | 🟢 | Find categories by keyword |
+| `validate-category <category_id>` | 🟢 | Validate category & get required attributes |
+| `validate-detail <json>` | 🟢 | Validate product details |
+| `draft-count` | 🟢 | Count draft products |
+| `get-draft <id>` | 🟢 | Get draft product details |
+| `auto-title <draft_id>` | 🟢 | Get AI-generated title suggestion |
+| `save-title <draft_id> <title_fa> [title_en] [desc] [advantages] [disadvantages]` | 🟡 | Save/validate title (modifies remote) |
+| `get-attributes <category_id>` | 🟢 | Get category attributes |
+| `validate-attributes <json>` | 🟢 | Validate product attributes |
+| `save-product <json>` | 🔴 | Create/save LIVE product (prompts `y/N`) |
+| `assign <product_id>` | 🔴 | Assign product to seller (prompts `y/N`) |
+| `brand-request <json>` | 🔴 | Request new brand (prompts `y/N`) |
 
 ### Category (`category.sh`)
-| Command | Description |
-|---------|-------------|
-| `tree [parent_id]` | Get category tree (root or children) |
-| `search <keyword>` | Search categories by keyword |
-| `validate <category_id>` | Validate category for product creation |
+| Command | Type | Description |
+|---------|------|-------------|
+| `tree [parent_id]` | 🟢 | Get category tree (root or children) |
+| `search <keyword>` | 🟢 | Search categories by keyword |
+| `validate <category_id>` | 🟢 | Validate category for product creation |
 
 ### Images (`image.sh`)
-| Command | Description |
-|---------|-------------|
-| `upload-product <file>` | Upload product image to temp storage |
-| `upload-request <file>` | Upload content request image |
-| `upload-brand <file>` | Upload brand logo image |
-| `ai-check <image_id> [is_main]` | AI quality check on uploaded image |
+| Command | Type | Description |
+|---------|------|-------------|
+| `upload-product <file>` | 🟡 | Upload product image to temp storage |
+| `upload-request <file>` | 🟡 | Upload content request image |
+| `upload-brand <file>` | 🟡 | Upload brand logo image |
+| `ai-check <image_id> [is_main]` | 🟢 | AI quality check on uploaded image |
 
 ## Product Creation Workflow
 
@@ -104,16 +121,16 @@ graph TD
 
 ### Example: Complete Product Creation
 ```bash
-# 1. Search for existing product
+# 1. Search for existing product (🟢 READ-ONLY)
 bash product-create.sh search "ساعت هوشمند"
 
-# 2. Check if can sell a specific product
+# 2. Check if can sell a specific product (🟢 READ-ONLY)
 bash product-create.sh be-seller 12345
 
-# 3. Validate category (get required attributes)
+# 3. Validate category (get required attributes) (🟢 READ-ONLY)
 bash product-create.sh validate-category 6351
 
-# 4. Validate product details
+# 4. Validate product details (🟢 READ-ONLY)
 bash product-create.sh validate-detail '{
   "category_id": 6351,
   "division_id": 123,
@@ -122,17 +139,18 @@ bash product-create.sh validate-detail '{
   "is_iranian": false
 }'
 
-# 5. Upload images
+# 5. Upload images (🟡 WRITE - uploads to Digikala servers)
 bash image.sh upload-product ./watch-main.jpg
 bash image.sh upload-product ./watch-side.jpg
 
-# 6. AI quality check
+# 6. AI quality check (🟢 READ-ONLY)
 bash image.sh ai-check "img_abc123" true
 
-# 7. Save title (Persian)
+# 7. Save title (🟡 WRITE - modifies remote product title)
 bash product-create.sh save-title 789 "ساعت هوشمند سامسونگ گلکسی واچ ۶"
 
-# 8. Save product with images
+# 8. Save product with images (🔴 STATE-CHANGING - CREATES LIVE PRODUCT)
+# ⚠️ Script will prompt: "Confirm? (y/N)"
 bash product-create.sh save-product '{
   "category_id": 6351,
   "draft_product_id": 789,
@@ -148,7 +166,8 @@ bash product-create.sh save-product '{
   }
 }'
 
-# 9. Assign to seller
+# 9. Assign to seller (🔴 STATE-CHANGING - MODIFIES SELLER INVENTORY)
+# ⚠️ Script will prompt: "Confirm? (y/N)"
 bash product-create.sh assign 99999
 ```
 
@@ -157,19 +176,20 @@ bash product-create.sh assign 99999
 **No token storage by scripts.** You manage tokens manually:
 
 ```bash
-# Environment variable (per session)
+# Option A: Environment variable (per session, not persisted)
 export DIGIKALA_ACCESS_TOKEN="your_token"
 
-# Persistent file (recommended)
+# Option B: Persistent file (recommended for repeated use)
 mkdir -p ~/.digikala
 echo "your_token" > ~/.digikala/token
-chmod 600 ~/.digikala/token
+chmod 600 ~/.digikala/token  # Restrict to owner only
 ```
 
 - Scripts read token from `DIGIKALA_ACCESS_TOKEN` env var first, then `~/.digikala/token`
-- **Never commit tokens to version control**
+- **Never commit tokens to version control** (add `~/.digikala/token` to `.gitignore`)
 - Rotate tokens periodically via Digikala seller panel
 - Tokens expire — renew before expiration
+- **Security**: The token file should be `chmod 600` (owner read/write only)
 
 ## API Reference
 
