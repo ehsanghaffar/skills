@@ -10,7 +10,7 @@ on EVERY drafted Telegram message, not just long ones. It flags:
   - Western (0-9) digits inside ordinary prose, which should normally be
     Persian digits (۰-۹), while leaving digits inside code/URLs alone
 
-Two ways this is meant to be used:
+Three ways this is meant to be used:
 
 1. Interactively, while drafting:
        python check_persian.py --file draft.txt
@@ -19,6 +19,18 @@ Two ways this is meant to be used:
    اجباری"): draft -> run this script -> if exit code is 1, revise the
    draft and run again -> only send once exit code is 0 (or remaining
    flags have been explicitly reviewed and are genuine exceptions).
+
+3. As a final pre-send review gate with `--strict`:
+       python check_persian.py --file draft.txt --strict
+   In strict mode the allowlist is bypassed entirely, so every Latin term
+   is flagged regardless of whether it was previously approved. Use this
+   for the last check before sending, so allowlist additions can never
+   silently let a bad term through.
+
+A separate `--pending` flag writes proposed allowlist additions to a
+review queue (default: `scripts/pending.txt`) instead of the live
+allowlist, so new terms must be explicitly approved before they affect
+future checks.
 
 Exit code 0 = clean. Exit code 1 = issues found. The final line of output
 is always a machine-parseable "RESULT: CLEAN" or "RESULT: ISSUES=<n>" so a
@@ -56,12 +68,22 @@ DEFAULT_ALLOWLIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "al
 
 
 def load_allowlist(path):
+    """Load approved Latin terms.
+
+    A line may carry an inline `# reason` comment documenting *why* the term
+    is allowed to stay in Latin, e.g.:
+
+        Telegram  # نام رسمی پلتفرم
+
+    The comment is stripped before the term is stored, so documenting the
+    reason never changes matching behaviour.
+    """
     terms = set()
     if path and os.path.isfile(path):
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
-                line = line.strip()
-                if line and not line.startswith("#"):
+                line = line.split("#", 1)[0].strip()
+                if line:
                     terms.add(line.lower())
     return terms
 
@@ -124,6 +146,13 @@ def report(text: str, issues):
         "allowlist.txt هم پرچم نمی‌خورند. اگر با این حال چیزی این‌جا پرچم خورده، "
         "معمولاً واقعاً باید فارسی شود — پیش‌نویس را اصلاح و دوباره اجرا کنید."
     )
+    print(
+        "\nیادآوری: این اسکریپت مترجم نیست؛ فقط پرچم می‌زند. تصمیم نهایی با شماست.\n"
+        "  • برای ثبت یک استثنای واقعی: `--pending` (آن را به صف پیش‌نویس می‌فرستد،\n"
+        "    نه مستقیم به allowlist.txt — پس تا وقتی تأیید نکرده‌اید، اثر نمی‌گذارد).\n"
+        "  • برای بازبینی نهایی پیش از ارسال: `--strict` (allowlist را کامل نادیده می‌گیرد\n"
+        "    تا مطمئن شوید هیچ کلمه‌ی لاتینی بی‌دلیل از پرچم گذشته است)."
+    )
     print(f"RESULT: ISSUES={len(issues)}")
     return 1
 
@@ -137,6 +166,16 @@ def main():
         default=DEFAULT_ALLOWLIST,
         help="Path to a file of terms allowed to stay in Latin script (default: scripts/allowlist.txt next to this script). Pass --allowlist '' to disable.",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Bypass the allowlist entirely so every Latin term is flagged. Use this for the final pre-send review gate.",
+    )
+    parser.add_argument(
+        "--pending",
+        action="store_true",
+        help="Instead of flagging Latin terms, write them to a review queue (default: scripts/pending.txt) for later approval. Never auto-approves.",
+    )
     args = parser.parse_args()
 
     if args.file:
@@ -147,8 +186,50 @@ def main():
     else:
         text = sys.stdin.read()
 
-    allowlist = load_allowlist(args.allowlist)
+    allowlist = set() if args.strict else load_allowlist(args.allowlist)
     issues = find_issues(text, allowlist)
+
+    if args.pending:
+        # Propose terms to a review queue. This NEVER edits allowlist.txt, so a
+        # new term cannot silently start passing future checks before a human
+        # (or a deliberate agent decision) has approved it.
+        pending_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pending.txt")
+        approved = load_allowlist(args.allowlist)
+        seen = set()
+        for kind, snippet, _pos in issues:
+            if kind == "latin_text" and snippet.lower() not in approved:
+                seen.add(snippet)
+
+        if not seen:
+            print("✅ هیچ متن لاتینیِ تأییدنشده‌ای برای پیشنهاد وجود ندارد.")
+            print("RESULT: CLEAN")
+            sys.exit(0)
+
+        existing = set()
+        if os.path.isfile(pending_path):
+            with open(pending_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.split("#", 1)[0].strip()
+                    if line:
+                        existing.add(line.lower())
+
+        new_terms = sorted(t for t in seen if t.lower() not in existing)
+        if new_terms:
+            with open(pending_path, "a", encoding="utf-8") as f:
+                for term in new_terms:
+                    f.write(term + "\n")
+
+        print("📝 موارد زیر به‌عنوان پیشنهاد ثبت شد (هنوز allowlist.txt را تغییر نداده‌اند):")
+        for term in sorted(seen):
+            mark = "جدید" if term.lower() not in existing else "قبلاً در صف انتظار"
+            print(f"- {term}  ({mark})")
+        print(f"\n صف پیش‌نویس: {pending_path}")
+        print(" هر مورد را جداگانه بررسی کنید؛ فقط موارد واقعاً ضروری را دستی به")
+        print(" allowlist.txt منتقل کنید و برای هرکدام دلیلش را به‌صورت کامنت کنار خط بنویسید.")
+        print(" یادتان باشد در پایان کار، `--strict` همه‌چیز را دوباره پرچم می‌زند.")
+        print(f"RESULT: ISSUES={len(seen)}")
+        sys.exit(1)
+
     sys.exit(report(text, issues))
 
 
