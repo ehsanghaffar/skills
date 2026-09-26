@@ -21,6 +21,11 @@
       "title": "lifestyle",
       "description": "Skills that help you improve your lifestyle and well-being.",
       "skills": ["digikala"]
+    },
+    {
+      "title": "personal-growth",
+      "description": "Skills that help you build evidence-based personal systems for learning, growth, and self-experimentation.",
+      "skills": ["persian-success-lab"]
     }
   ]
 }
