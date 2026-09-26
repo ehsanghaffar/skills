@@ -63,8 +63,10 @@ LATIN_WORD_RE = re.compile(r"[A-Za-z][A-Za-z\-']{1,}")
 # NOT be flagged.
 WESTERN_DIGIT_RE = re.compile(r"[0-9]+")
 
-PLACEHOLDER = "\uE000"  # private-use char used to blank out protected spans
-DEFAULT_ALLOWLIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allowlist.txt")
+PLACEHOLDER = "\ue000"  # private-use char used to blank out protected spans
+DEFAULT_ALLOWLIST = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "allowlist.txt"
+)
 
 
 def load_allowlist(path):
@@ -91,9 +93,11 @@ def load_allowlist(path):
 def mask_protected_spans(text: str):
     """Replace code blocks, inline code, and URLs with placeholders so they
     are never flagged."""
+
     def _mask(pattern, s):
         def repl(m):
             return PLACEHOLDER * len(m.group(0))
+
         return pattern.sub(repl, s)
 
     masked = _mask(CODE_BLOCK_RE, text)
@@ -131,14 +135,20 @@ def find_issues(text: str, allowlist):
 
 def report(text: str, issues):
     if not issues:
-        print("✅ چیزی برای پرچم‌گذاری پیدا نشد — متن از نظر زبان و اعداد تمیز به نظر می‌رسد.")
+        print(
+            "✅ چیزی برای پرچم‌گذاری پیدا نشد — متن از نظر زبان و اعداد تمیز به نظر می‌رسد."
+        )
         print("RESULT: CLEAN")
         return 0
 
     print(f"⚠️  {len(issues)} مورد برای بازبینی پیدا شد:\n")
     for kind, snippet, pos in issues:
-        context = text[max(0, pos - 20):pos + len(snippet) + 20].replace("\n", " ")
-        label = "متن لاتین خارج از کد/لینک/پرانتز" if kind == "latin_text" else "رقم لاتین در نثر (احتمالاً باید فارسی شود)"
+        context = text[max(0, pos - 20) : pos + len(snippet) + 20].replace("\n", " ")
+        label = (
+            "متن لاتین خارج از کد/لینک/پرانتز"
+            if kind == "latin_text"
+            else "رقم لاتین در نثر (احتمالاً باید فارسی شود)"
+        )
         print(f"- [{label}] «{snippet}»  …{context}…")
 
     print(
@@ -158,8 +168,12 @@ def report(text: str, issues):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Check a Telegram draft for leftover non-Persian text/digits.")
-    parser.add_argument("text", nargs="?", help="The message text to check (or use --file / stdin)")
+    parser = argparse.ArgumentParser(
+        description="Check a Telegram draft for leftover non-Persian text/digits."
+    )
+    parser.add_argument(
+        "text", nargs="?", help="The message text to check (or use --file / stdin)"
+    )
     parser.add_argument("--file", help="Path to a file containing the draft message")
     parser.add_argument(
         "--allowlist",
@@ -193,7 +207,9 @@ def main():
         # Propose terms to a review queue. This NEVER edits allowlist.txt, so a
         # new term cannot silently start passing future checks before a human
         # (or a deliberate agent decision) has approved it.
-        pending_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pending.txt")
+        pending_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "pending.txt"
+        )
         approved = load_allowlist(args.allowlist)
         seen = set()
         for kind, snippet, _pos in issues:
@@ -219,13 +235,17 @@ def main():
                 for term in new_terms:
                     f.write(term + "\n")
 
-        print("📝 موارد زیر به‌عنوان پیشنهاد ثبت شد (هنوز allowlist.txt را تغییر نداده‌اند):")
+        print(
+            "📝 موارد زیر به‌عنوان پیشنهاد ثبت شد (هنوز allowlist.txt را تغییر نداده‌اند):"
+        )
         for term in sorted(seen):
             mark = "جدید" if term.lower() not in existing else "قبلاً در صف انتظار"
             print(f"- {term}  ({mark})")
         print(f"\n صف پیش‌نویس: {pending_path}")
         print(" هر مورد را جداگانه بررسی کنید؛ فقط موارد واقعاً ضروری را دستی به")
-        print(" allowlist.txt منتقل کنید و برای هرکدام دلیلش را به‌صورت کامنت کنار خط بنویسید.")
+        print(
+            " allowlist.txt منتقل کنید و برای هرکدام دلیلش را به‌صورت کامنت کنار خط بنویسید."
+        )
         print(" یادتان باشد در پایان کار، `--strict` همه‌چیز را دوباره پرچم می‌زند.")
         print(f"RESULT: ISSUES={len(seen)}")
         sys.exit(1)
