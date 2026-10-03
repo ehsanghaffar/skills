@@ -1,0 +1,19 @@
+{
+  "skill_name": "engineering-architecture-memory",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "refactor-legacy-code",
+      "prompt": "I have a legacy module in my project that handles user authentication. It's a bit messy and I want to refactor it to use a more modern approach. Can you help me refactor it? Here is the code: [code snippet]",
+      "expected_output": "The agent should audit the existing code, identify architectural smells, and propose a refactor that respects existing boundaries and quality attributes.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "add-new-feature",
+      "prompt": "I need to add a new feature to my application that allows users to upload profile pictures. The current architecture uses a monolithic structure. How should I implement this while maintaining architectural integrity?",
+      "expected_output": "The agent should consider the impact on the existing architecture, suggest a design that respects boundaries, and consider quality attributes like security and performance.",
+      "files": []
+    }
+  ]
+}
