@@ -1,0 +1,33 @@
+{
+  "skill_name": "persian-resume",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "generate_pdf_resume_classic_template",
+      "prompt": "Generate a Persian resume from the following candidate data using the classic template and save as PDF:\n\n- Name: علی احمدی\n- Title: توسعه‌دهنده Full-Stack\n- Email: ali@example.com | Phone: +98 912 123 4567\n- Summary: 5 years web experience with Next.js 16, React 18, Django, FastAPI\n- Experience: Snapp — Senior Backend Developer — ۱۴۰۱/۰۳ to now\n  • Reduced API latency from 800ms to 120ms (85%)\n  • Technologies: Python, Django, FastAPI, PostgreSQL, Docker\n- Education: University of Tehran — BSc Electrical — ۱۳۹۵–۱۳۹۹\n- Skills: JavaScript, TypeScript, React, Next.js, Node.js\n- GitHub: github.com/ehsanghaffarii\n\nUse the classic template (single-column layout). Save as PDF.",
+      "expected_output": "A PDF file with:\n- Classic single-column layout\n- RTL document direction throughout\n- Name, title, contact info in header\n- Experience section with company/role/dates\n- Skills with English terms intact (Next.js, React, not transliterated)\n- Persian dates in Persian calendar\n- URLs and emails readable and LTR\n- Professional typography",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "generate_pdf_resume_modern_template",
+      "prompt": "Generate a Persian resume from the following candidate data using the modern template and save as PDF:\n\n- Name: علی احمدی\n- Title: توسعه‌دهنده Full-Stack\n- Email: ali@example.com | Phone: +98 912 123 4567\n- Summary: 5 years web experience with Next.js 16, React 18, Django, FastAPI\n- Experience: Snapp — Senior Backend Developer — ۱۴۰۱/۰۳ to now\n  • Reduced API latency from 800ms to 120ms (85%)\n  • Technologies: Python, Django, FastAPI, PostgreSQL, Docker\n- Education: University of Tehran — BSc Electrical — ۱۳۹۵–۱۳۹۹\n- Skills: JavaScript, TypeScript, React, Next.js, Node.js\n- GitHub: github.com/ehsanghaffarii\n\nUse the modern template (two-column layout with sidebar). Save as PDF.",
+      "expected_output": "A PDF file with:\n- Modern two-column layout (sidebar + main area)\n- Sidebar with contact info and skills\n- Main area with experience, education, projects\n- RTL document direction throughout\n- English tech terms intact\n- Professional typography",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "generate_docx_resume_modern_template",
+      "prompt": "Generate a Persian resume in DOCX format using the modern template with the following content:\n\n- Name: مریم رضایی\n- Title: توسعه‌دهنده Frontend\n- Email: maryam@example.com | LinkedIn: linkedin.com/in/maryam\n- Summary: 4 years in React and Vue.js development\n- Experience: \n  • Company: NikaTech — Role: Frontend Developer — 2022–Present\n    - Built responsive dashboard with Next.js 16 and Tailwind\n    - Improved Lighthouse score from 45 to 92\n  • Company: ParsWeb — Role: Junior Developer — 1399–1402\n    - Maintained React + TypeScript codebase\n- Skills: React, Vue.js, TypeScript, Next.js, Tailwind, CSS3\n- Languages: فارسی (مادری), English (fluent)\n\nUse the persian-resume skill with the modern template. Save as DOCX.",
+      "expected_output": "A DOCX file with:\n- Modern two-column layout\n- RTL document direction\n- Mixed Persian/English content rendering correctly\n- English tech terms intact (Next.js, Tailwind, TypeScript)\n- Dates consistent (mixed calendar handled properly)\n- Contact info with LTR URLs/emails\n- Professional structure and typography",
+      "files": []
+    },
+    {
+      "id": 4,
+      "eval_name": "transform_existing_resume_content",
+      "prompt": "Transform the following raw career information into a polished, professional Persian resume (PDF) using the classic template. The user wants a compact one-page layout targeting a Backend developer role:\n\n- Name: سارا کریمی\n- Role applied for: توسعه‌دهنده Backend\n- 3 years experience: Python, Django, FastAPI, PostgreSQL\n- One company: TechIran — Backend Developer — ۱۴۰۲–اکنون\n  • Built REST API for payment system\n  • Reduced response time ۳۰٪\n  • Docker deployment\n- Education: Sharif — CS Bachelor — ۱۳۹۸–۱۴۰۲\n- GitHub: github.com/sarakarami\n\nFocus on relevant experience for Backend role. Do not invent any information. Keep to one page.",
+      "expected_output": "A PDF file with:\n- Classic single-column layout\n- Compact one-page layout\n- Backend-relevant experience prioritized\n- Professional summary tailored to Backend role\n- Persian dates (Shamsi calendar)\n- English tech terms intact (Python, Django, FastAPI, PostgreSQL, Docker)\n- GitHub URL readable and LTR\n- No invented information",
+      "files": []
+    }
+  ]
+}
