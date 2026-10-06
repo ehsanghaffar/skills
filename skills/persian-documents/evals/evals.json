@@ -1,0 +1,40 @@
+{
+  "skill_name": "persian-document-generator",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "mixed_persian_english_document",
+      "prompt": "Generate a Persian technical report titled 'مستند فنی سیستم' with the following sections:\n\n1. An introduction paragraph mentioning: 'نسخه 16.0.7 منتشر شد. این نسخه شامل Next.js و React Query است.'\n2. A table with columns: فیچر | نسخه | وضعیت | توضیحات containing mixed Persian/English content like 'React Query | v5.60.0 | فعال | مدیریت state'\n3. An ordered list of installation steps with commands like 'npm install @tanstack/react-query'\n4. A code block with JavaScript code\n5. A URL: https://api.example.com/v1/users\n6. An email: hello@example.com\n\nThe document must be generated as a Word document with correct RTL layout, proper mixed-direction text handling, and professional typography.",
+      "expected_output": "A .docx file with:\n- RTL paragraph direction throughout\n- Table with correct RTL column order\n- Mixed Persian/English text rendering naturally (English not reversed)\n- Version numbers intact (16.0.7, 5.60.0)\n- URLs and emails readable and unbroken\n- Code blocks in LTR direction\n- Professional Persian typography\n- Correct ZWNJ usage",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "persian_formal_letter",
+      "prompt": "Generate a formal Persian business letter (نامه رسمی) with the following structure:\n\n- Sender: شرکت فناوری نوین، تهران\n- Date: ۱۴۰۵/۰۷/۱۴\n- Recipient: مدیرعامل شرکت\n- Subject: درخواست همکاری فنی\n- Body: 3-4 paragraphs discussing a technical partnership, mentioning API endpoints like https://api.partner.com/v2/connect and version numbers like v3.2.1\n- Closing: با احترام\n- Signature: تیم فنی\n\nThe letter must have correct RTL layout, proper formal Persian tone, and mixed technical content (URLs, version numbers) rendered correctly.",
+      "expected_output": "A .docx file with:\n- Formal Persian letter structure\n- RTL direction throughout\n- Persian date format (۱۴۰۵/۰۷/۱۴)\n- URLs intact and readable\n- Version numbers correct (v3.2.1)\n- Professional typography\n- Correct signature block alignment",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "persian_technical_documentation",
+      "prompt": "Generate Persian technical documentation for a web application with the following sections:\n\n1. Title: 'راهنمای نصب و پیکربندی'\n2. Prerequisites: Node.js 20.11.0+, npm 10.x\n3. Installation steps (ordered list):\n   - مرحله ۱: کلون کردن ریپازیتوری\n   - مرحله ۲: نصب وابستگی‌ها با npm install\n   - مرحله ۳: تنظیم فایل .env\n4. Configuration table with columns: پارامتر | مقدار | توضیح containing rows like:\n   - API_URL | https://api.example.com | آدرس سرور\n   - VERSION | 2.4.10 | نسخه سیستم\n5. A code block showing a JavaScript configuration file\n6. A block quote with a technical note\n7. FAQ section with 2-3 questions in Persian and technical answers\n\nThe documentation must have correct RTL layout, proper code blocks, and all technical content (URLs, versions, commands) preserved correctly.",
+      "expected_output": "A .docx file with:\n- Technical documentation structure\n- RTL layout with proper headings\n- Ordered and unordered lists\n- Table with mixed Persian/English content\n- Code blocks in LTR direction\n- Block quote\n- All technical values intact (URLs, versions, commands)\n- Professional typography",
+      "files": []
+    },
+    {
+      "id": 4,
+      "eval_name": "persian_resume_with_mixed_content",
+      "prompt": "Generate a Persian resume (رزومه) with the following sections:\n\n1. Name: علی احمدی\n2. Contact: ایمیل: ali@example.com | تلفن: 09121234567 | وبسایت: https://aliahmadi.com\n3. Summary paragraph in Persian mentioning experience with Next.js 14, React 18, and TypeScript 5.4\n4. Experience section with 2 jobs, each including:\n   - Company name (English)\n   - Role (Persian)\n   - Dates (Persian numerals: ۱۴۰۲/۰۱/۰۱ تا ۱۴۰۴/۰۶/۳۰)\n   - Description with mixed Persian/English\n5. Skills section with a table: مهارت | سطح | سال تجربه\n6. Education section\n\nThe resume must have correct RTL layout, proper mixed-direction content (English company names, Persian descriptions), and professional formatting.",
+      "expected_output": "A .docx file with:\n- RTL resume structure\n- Mixed Persian/English content (company names in English, descriptions in Persian)\n- Dates in Persian numerals\n- Table with correct RTL direction\n- Contact info with URLs and emails intact\n- Professional typography",
+      "files": []
+    },
+    {
+      "id": 5,
+      "eval_name": "persian_report_with_tables_and_lists",
+      "prompt": "Generate a Persian quarterly report (گزارش فصلی) with the following structure:\n\n1. Title: 'گزارش فصلی سوم' with date ۱۴۰۵/۰۶/۰۱\n2. Executive summary paragraph\n3. Key metrics table with columns: شاخص | مقدار | واحد | تغییرات containing:\n   - کاربران فعال | ۱۲,۴۵۰ | نفر | +۱۵٪\n   - درآمد | ۲,۴۵۰,۰۰۰,۰۰۰ | تومان | +۲۳٪\n   - نسخه نرم‌افزار | 3.2.1 | - | - (technical version)\n4. Detailed sections with:\n   - Unordered list of achievements\n   - Ordered list of action items\n   - Nested lists for sub-items\n5. A technical section with code snippets and CLI commands\n6. Conclusion paragraph\n\nThe report must have correct RTL layout, proper table direction, correct Persian/Arabic numeral usage, and professional document structure.",
+      "expected_output": "A .docx file with:\n- RTL report structure\n- Table with correct column order and alignment\n- Mixed numerals (Persian for counts, Latin for versions)\n- Ordered and unordered lists with correct direction\n- Nested lists\n- Code blocks and CLI commands in LTR\n- Professional Persian typography\n- Page layout with headers/footers",
+      "files": []
+    }
+  ]
+}
