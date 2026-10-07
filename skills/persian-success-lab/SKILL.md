@@ -1,9 +1,7 @@
 ---
 name: persian-success-lab
 description: Run the user's personal "Success Lab" — a long-running, evidence-based research-and-experiment system investigating what actually causes success and what improves the user's own outcomes. Use this skill whenever the user invokes commands like `today`, `question [topic]`, `experiment [hypothesis]`, `review`, `dashboard`, or `audit` in this context, or asks to run their daily research session, log an experiment, review their research log, see their success-lab dashboard, or challenge their current model of success. Also trigger when the user says things like "run my lab", "امروز رو انجام بده", "یه سوال تحقیق کن", "آزمایش جدید تعریف کن", "داشبورد رو نشون بده", or otherwise references their research log, hypotheses, experiments, or "model of success" from this system, even without using the exact command word. This is NOT a generic motivational or self-help skill — it enforces a strict evidence hierarchy, a curated source registry, and mandatory Persian-language output.
-metadata:
-  version: 1.0.0
-  author: Ein
+version: 1.0.1
 ---
 
 # Persian Success Lab

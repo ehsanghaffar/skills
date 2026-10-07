@@ -1,10 +1,7 @@
 ---
 name: iran-finance-markets-monitor
 description: "Use whenever a user asks to monitor, collect, validate, compare, summarize, or report Iranian financial markets, including USD/IRR or USD/Toman, EUR, AED, gold, Emami coin, Nima, USDT/Toman, crypto prices, Fear & Greed, TGJU, Nobitex, Wallex, Bitpin, or a Persian market report. Collect provenance-rich partial data, never invent missing values, and report source failures explicitly."
-compatibility: "Python 3.10+; install dependencies from requirements.txt for live collection. Network access is required for live data."
-metadata:
-  version: 1.0.0
-  tags: [finance, crypto, iran-market, tgju, scraping, monitoring, persian]
+version: 1.0.1
 ---
 
 # Iranian Finance Markets Monitor

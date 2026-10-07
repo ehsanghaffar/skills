@@ -1,23 +1,7 @@
 ---
 name: obsidian-doc-workflow
 description: Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
-version: 1.0.1
-metadata:
-  openclaw:
-    requires:
-      bins:
-        - obsidian-cli
-        - python3
-      env:
-        - OBSIDIAN_VAULT_PATH
-    emoji: "📚"
-    homepage: "https://clawhub.ai/agent/obsidian-doc-workflow"
-    models:
-      - gpt-4
-      - deepseek-v4-flash
-      - claude-sonnet-4
-      - m3o-mini
-      - gemini-2.0-flash
+version: 1.0.2
 ---
 
 # Obsidian Documentation Workflow

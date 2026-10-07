@@ -1,6 +1,7 @@
 ---
 name: engineering-architecture
 description: Apply persistent engineering and architectural principles to every task. Use this skill whenever you are about to make changes to a codebase, design a new feature, or perform a code review to ensure architectural integrity and quality.
+version: 1.0.0
 ---
 
 # Engineering & Architecture Memory

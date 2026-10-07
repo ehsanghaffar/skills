@@ -1,0 +1,19 @@
+{
+  "skill_name": "persian-success-lab",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "today_session_output",
+      "prompt": "Run today's lab session. What is the research question for today and what evidence did you find?",
+      "expected_output": "Should produce a compact Persian output with: today's question, evidence summary, uncertainty, hypothesis, experiment, and measurement criteria.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "audit_mode",
+      "prompt": "Run an audit of my current success model. What might be wrong with my beliefs?",
+      "expected_output": "Should challenge the current model directly: survivorship bias, correlation vs causation, weak evidence, unfalsifiable beliefs.",
+      "files": []
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: persian-documents
 description: Generate production-quality Persian documents with correct RTL layout, bidirectional text handling, and professional typography. Use this skill whenever the user asks to create Persian documents — reports, letters, articles, technical documentation, resumes, PDFs, Word documents, or any document containing Persian text mixed with English, numbers, code, URLs, or other LTR content. Also trigger when the user asks to "fix RTL" or "fix direction" in a Persian document, or when a document needs to be regenerated because Persian text rendered incorrectly. This skill is NOT just for writing Persian prose — it is for producing documents where the final rendered output is typographically correct, structurally sound, and ready for real-world use.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Persian Document Generator

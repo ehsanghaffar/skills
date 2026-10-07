@@ -9,7 +9,7 @@ description: >-
   any language and wants a professional Persian CV, or asks to fix RTL/bidi
   issues in a Persian resume. This skill is NOT for general Persian documents —
   use persian-documents for reports, letters, articles, and technical docs.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Persian Resume / CV Generator

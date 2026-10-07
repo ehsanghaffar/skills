@@ -59,8 +59,20 @@ REVERSED_CHECK = {
 def check_rtl_direction(text: str) -> List[Dict]:
     """Check that Persian text isn't forced LTR."""
     issues = []
-    # Look for common LTR-forcing patterns that shouldn't be there
-    # (e.g., explicit left-align on Persian paragraphs)
+    # Check for explicit LTR direction markers
+    if re.search(r'dir\s*=\s*["\']ltr["\']', text, re.IGNORECASE):
+        issues.append({
+            "check": "rtl_direction",
+            "severity": "error",
+            "message": "Explicit LTR direction found in RTL document",
+        })
+    # Check for LRM control characters in wrong positions
+    for m in re.finditer('‎', text):
+        issues.append({
+            "check": "rtl_direction",
+            "severity": "warning",
+            "message": f"LTR mark at position {m.start()}",
+        })
     return issues
 
 
@@ -80,16 +92,28 @@ def check_bidi_mixed(text: str) -> List[Dict]:
 
 
 def check_tech_terms(text: str) -> List[Dict]:
-    """Ensure technical terms are in standard English spelling."""
+    """Ensure technical terms are in standard English spelling, not Farsified."""
     issues = []
-    # Check that terms appear in correct form (case-insensitive)
+    FARSIFIED = {
+        "جاوااسکریپت": "JavaScript",
+        "ری‌اکت": "React",
+        "انگولار": "Angular",
+        "پایتون": "Python",
+        "نود‌دات‌جی‌اس": "Node.js",
+        "تایپ‌اسکریپت": "TypeScript",
+        "ری‌اکت‌نا‌تیو": "React Native",
+        "اپل": "Apple",
+        "فیسبوک": "Facebook",
+        "آمازون": "Amazon",
+    }
     text_lower = text.lower()
-    for term in TECH_TERMS:
-        # If the term has dots (Next.js), check flexible matching
-        term_lower = term.lower().replace(".", r"\.?")
-        if re.search(term_lower, text_lower):
-            continue  # term is present in correct form
-        # No issue — term simply not used in this resume
+    for farsi, english in FARSIFIED.items():
+        if farsi.lower() in text_lower:
+            issues.append({
+                "check": "tech_terms",
+                "severity": "warning",
+                "message": f"Use '{english}' instead of '{farsi}'",
+            })
     return issues
 
 

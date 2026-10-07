@@ -1,0 +1,26 @@
+{
+  "skill_name": "digikala",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "product_creation_workflow",
+      "prompt": "I need to create a new product on Digikala. I have a Samsung Galaxy Watch 6 with category 6351, brand 456, dimensions 10x5x2cm, weight 50g. Walk me through the complete product creation pipeline.",
+      "expected_output": "The agent should guide through: search existing products → validate category → create draft → upload images → AI check → save title → save product → assign to seller, with safety warnings for state-changing steps.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "category_validation",
+      "prompt": "What category should I use for selling wireless earbuds on Digikala? Search for 'wireless earbuds' and validate the category.",
+      "expected_output": "The agent should use category.sh to search for the keyword and validate the category, returning the category ID and required attributes.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "image_upload_and_ai_check",
+      "prompt": "I have an image at ./product.jpg that I want to upload to Digikala for a product draft. Walk me through the upload and AI quality check.",
+      "expected_output": "The agent should use image.sh to upload the product image, then run AI quality check, reporting any issues found.",
+      "files": []
+    }
+  ]
+}

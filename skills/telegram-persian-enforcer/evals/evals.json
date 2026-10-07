@@ -1,0 +1,19 @@
+{
+  "skill_name": "telegram-persian-enforcer",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "latin_word_detection",
+      "prompt": "Check this Telegram draft for leftover Latin words: 'سلام، امروز از API سوال دارم. My code کار میکنه not.'",
+      "expected_output": "Should flag 'API', 'My', 'code', 'کار میکنه' (not'), 'not' as Latin words outside code/URL/parentheses contexts.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "western_digit_normalization",
+      "prompt": "Check this Telegram draft for Western digits: 'امروز 3 نفر گفتند 100 درصد موفق بودند.',
+      "expected_output": "Should flag Western digits '3' and '100' as needing Persian numeral conversion (۳, ۱۰۰).",
+      "files": []
+    }
+  ]
+}

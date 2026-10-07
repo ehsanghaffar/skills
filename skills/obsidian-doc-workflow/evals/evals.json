@@ -1,0 +1,19 @@
+{
+  "skill_name": "obsidian-doc-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "document_creation",
+      "prompt": "Create a new project document for 'MyApp' with proper frontmatter and vault structure.",
+      "expected_output": "Should create document in 01 Projects/MyApp/ with correct frontmatter (type, status, area, created, updated, tags).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "document_classification",
+      "prompt": "I have a note about 'Monorepo patterns' that applies to multiple projects. Where should I place it?",
+      "expected_output": "Should classify as Shared Knowledge (02 Shared Knowledge/), not Project-specific.",
+      "files": []
+    }
+  ]
+}
