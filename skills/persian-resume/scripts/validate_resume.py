@@ -232,6 +232,18 @@ def check_file_integrity(output_path: str) -> List[Dict]:
                     "severity": "error",
                     "message": "DOCX has no paragraphs",
                 })
+            # Section-level RTL check
+            W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+            try:
+                sectPr = doc.sections[0]._sectPr
+                if sectPr.find(W + 'bidi') is None:
+                    issues.append({
+                        "check": "file",
+                        "severity": "error",
+                        "message": "DOCX sections lack <w:bidi/> — Word will open this file LTR",
+                    })
+            except (AttributeError, IndexError):
+                pass
         except Exception as e:
             issues.append({
                 "check": "file",

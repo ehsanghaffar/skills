@@ -7,9 +7,10 @@ description: >-
   mixed Persian and English/technical content that must remain readable and
   correctly ordered in RTL. Also trigger when the user provides career info in
   any language and wants a professional Persian CV, or asks to fix RTL/bidi
-  issues in a Persian resume. This skill is NOT for general Persian documents —
-  use persian-documents for reports, letters, articles, and technical docs.
-version: 0.1.1
+  issues in a Persian resume. This skill is scoped to resumes and CVs only —
+  not general Persian documents such as reports, letters, articles, or
+  technical docs.
+version: 0.1.2
 ---
 
 # Persian Resume / CV Generator
@@ -25,7 +26,7 @@ transforming existing content.
 - User provides career info in any language and wants a Persian CV
 - Fixing RTL/bidi issues in an existing Persian resume
 - Output must be PDF or DOCX for real job applications
-- **Not for**: reports, letters, articles — use `persian-documents` instead
+- **Not for**: reports, letters, articles — general documents are outside this skill's scope
 
 ## Core principle
 

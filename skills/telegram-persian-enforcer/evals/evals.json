@@ -11,7 +11,7 @@
     {
       "id": 2,
       "eval_name": "western_digit_normalization",
-      "prompt": "Check this Telegram draft for Western digits: 'امروز 3 نفر گفتند 100 درصد موفق بودند.',
+      "prompt": "Check this Telegram draft for Western digits: 'امروز 3 نفر گفتند 100 درصد موفق بودند.',",
       "expected_output": "Should flag Western digits '3' and '100' as needing Persian numeral conversion (۳, ۱۰۰).",
       "files": []
     }

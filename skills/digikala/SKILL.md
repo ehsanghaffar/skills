@@ -85,13 +85,13 @@ Authorization: Bearer <access_token>
 
 ```bash
 # Product creation workflow
-bash /mnt/skills/user/digikala/scripts/product-create.sh <step> [args]
+bash scripts/product-create.sh <step> [args]
 
 # Category utilities
-bash /mnt/skills/user/digikala/scripts/category.sh <command> [args]
+bash scripts/category.sh <command> [args]
 
 # Image handling
-bash /mnt/skills/user/digikala/scripts/image.sh <command> [args]
+bash scripts/image.sh <command> [args]
 ```
 
 **Script Arguments:**
@@ -111,26 +111,26 @@ export DIGIKALA_ACCESS_TOKEN="your_access_token_here"
 
 # ✅ READ-ONLY: Safe to run anytime
 # Search products to sell
-bash /mnt/skills/user/digikala/scripts/product-create.sh search "iPhone 15"
+bash scripts/product-create.sh search "iPhone 15"
 
 # Validate category and get required attributes
-bash /mnt/skills/user/digikala/scripts/product-create.sh validate-category 12345
+bash scripts/product-create.sh validate-category 12345
 
 # Upload product image (uploads to Digikala temp storage)
-bash /mnt/skills/user/digikala/scripts/image.sh upload-product /path/to/image.jpg
+bash scripts/image.sh upload-product /path/to/image.jpg
 
 # AI quality check on uploaded image
-bash /mnt/skills/user/digikala/scripts/image.sh ai-check "image_id" true
+bash scripts/image.sh ai-check "image_id" true
 
 # Save product title (modifies remote data)
-bash /mnt/skills/user/digikala/scripts/product-create.sh save-title 123 "گوشی موبایل اپل آیفون 15"
+bash scripts/product-create.sh save-title 123 "گوشی موبایل اپل آیفون 15"
 
 # ⚠️ STATE-CHANGING: These prompt for confirmation before executing
 # Save product (CREATES LIVE PRODUCT on marketplace)
-bash /mnt/skills/user/digikala/scripts/product-create.sh save-product '{"category_id":123,"draft_product_id":456,...}'
+bash scripts/product-create.sh save-product '{"category_id":123,"draft_product_id":456,...}'
 
 # Assign product to seller (MODIFIES SELLER INVENTORY)
-bash /mnt/skills/user/digikala/scripts/product-create.sh assign 789
+bash scripts/product-create.sh assign 789
 ```
 
 ## Output
@@ -179,8 +179,6 @@ When presenting API results to users, format as:
 {...}
 ````
 
-```
-
 ## Troubleshooting
 
 | Error | Cause | Solution |
@@ -201,4 +199,4 @@ When presenting API results to users, format as:
 - **Image URLs**: Temp images expire; use `use_temp_images: true` in product save to reference them
 - **Commission Rates**: Vary by category; check `/product-creation/be-seller/{id}` before listing
 - **Token Management**: Tokens are NOT stored by scripts. Provide via `DIGIKALA_ACCESS_TOKEN` env var or `~/.digikala/token` file (chmod 600 recommended)
-```
+- **Non-Interactive Use**: Dangerous operations (`save-product`, `assign`, `brand-request`) prompt on a terminal but refuse when stdin is not interactive; set `DIGIKALA_CONFIRM=1` to confirm from scripts or agents.

@@ -63,6 +63,13 @@ LATIN_WORD_RE = re.compile(r"[A-Za-z][A-Za-z\-']{1,}")
 # NOT be flagged.
 WESTERN_DIGIT_RE = re.compile(r"[0-9]+")
 
+# Digit-bearing tokens that are content, not prose, and must keep ASCII
+# digits per SKILL.md rule ۱: version numbers (v2.4.1, 1.0.2) and
+# identifiers mixing letters and digits (INV-2024-001, utf8, sha256).
+# These are masked out before the Western-digit scan.
+VERSION_RE = re.compile(r"\b[vV]?\d+(?:\.\d+)+\b")
+IDENTIFIER_RE = re.compile(r"\b[A-Za-z][A-Za-z0-9]*(?:[-_][A-Za-z0-9]+)*\d[A-Za-z0-9]*\b|\b\d+[A-Za-z][A-Za-z0-9]*\b")
+
 PLACEHOLDER = "\ue000"  # private-use char used to blank out protected spans
 DEFAULT_ALLOWLIST = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "allowlist.txt"
@@ -91,8 +98,9 @@ def load_allowlist(path):
 
 
 def mask_protected_spans(text: str):
-    """Replace code blocks, inline code, and URLs with placeholders so they
-    are never flagged."""
+    """Replace code blocks, inline code, URLs, version numbers, and
+    alphanumeric identifiers with placeholders so they are never flagged —
+    per SKILL.md rule ۱ these are content, not prose."""
 
     def _mask(pattern, s):
         def repl(m):
@@ -103,6 +111,8 @@ def mask_protected_spans(text: str):
     masked = _mask(CODE_BLOCK_RE, text)
     masked = _mask(INLINE_CODE_RE, masked)
     masked = _mask(URL_RE, masked)
+    masked = _mask(VERSION_RE, masked)
+    masked = _mask(IDENTIFIER_RE, masked)
     return masked
 
 
@@ -188,7 +198,11 @@ def main():
     parser.add_argument(
         "--pending",
         action="store_true",
-        help="Instead of flagging Latin terms, write them to a review queue (default: scripts/pending.txt) for later approval. Never auto-approves.",
+        help="Instead of flagging Latin terms, write them to a review queue for later approval. Never auto-approves. Queue location: --pending-file, $PERSIAN_CHECK_PENDING_FILE, $XDG_STATE_HOME/telegram-persian-enforcer/, ~/.local/state/telegram-persian-enforcer/, or scripts/pending.txt as last resort.",
+    )
+    parser.add_argument(
+        "--pending-file",
+        help="Explicit path for the --pending review queue.",
     )
     args = parser.parse_args()
 
@@ -207,9 +221,33 @@ def main():
         # Propose terms to a review queue. This NEVER edits allowlist.txt, so a
         # new term cannot silently start passing future checks before a human
         # (or a deliberate agent decision) has approved it.
-        pending_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "pending.txt"
-        )
+        #
+        # The queue is mutable state, so it must not live inside the skill
+        # directory: installs may be read-only or shared. Resolution order:
+        # --pending-file flag, then $PERSIAN_CHECK_PENDING_FILE, then
+        # $XDG_STATE_HOME, then ~/.local/state, and only then the legacy
+        # location next to this script (which also covers the common case of a
+        # personal, writable install).
+        if args.pending_file:
+            pending_path = args.pending_file
+        elif os.environ.get("PERSIAN_CHECK_PENDING_FILE"):
+            pending_path = os.environ["PERSIAN_CHECK_PENDING_FILE"]
+        else:
+            state_home = os.environ.get("XDG_STATE_HOME") or os.path.expanduser(
+                "~/.local/state"
+            )
+            state_dir = os.path.join(state_home, "telegram-persian-enforcer")
+            try:
+                os.makedirs(state_dir, exist_ok=True)
+                probe = os.path.join(state_dir, ".write-probe")
+                with open(probe, "a", encoding="utf-8"):
+                    pass
+                os.remove(probe)
+                pending_path = os.path.join(state_dir, "pending.txt")
+            except OSError:
+                pending_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "pending.txt"
+                )
         approved = load_allowlist(args.allowlist)
         seen = set()
         for kind, snippet, _pos in issues:

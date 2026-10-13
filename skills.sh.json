@@ -3,14 +3,19 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "productivity",
-      "description": "Skills that help you be more productive and efficient in your work.",
-      "skills": ["digikala", "obsidian-doc-workflow", "engineering-architecture", "persian-documents", "persian-resume"]
+      "title": "documents",
+      "description": "Generate Persian (RTL) documents and resumes that render correctly, with mixed-direction content.",
+      "skills": ["persian-documents", "persian-resume"]
     },
     {
-      "title": "communication",
-      "description": "Skills that help you communicate effectively with others.",
-      "skills": ["telegram-persian-enforcer"]
+      "title": "engineering",
+      "description": "Architecture principles and vault documentation workflows for day-to-day software work.",
+      "skills": ["engineering-architecture", "obsidian-doc-workflow"]
+    },
+    {
+      "title": "commerce",
+      "description": "Skills that work with shopping, marketplaces, and online commerce.",
+      "skills": ["digikala"]
     },
     {
       "title": "finance",
@@ -18,9 +23,9 @@
       "skills": ["iran-finance-markets-monitor"]
     },
     {
-      "title": "lifestyle",
-      "description": "Skills that help with shopping, marketplace, and online commerce.",
-      "skills": []
+      "title": "communication",
+      "description": "Skills that help you communicate effectively with others.",
+      "skills": ["telegram-persian-enforcer"]
     },
     {
       "title": "personal-growth",

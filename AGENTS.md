@@ -18,7 +18,8 @@ skills/
       {script-name}.sh    # Bash scripts
       {script-name}.mjs   # Node scripts
     references/           # Optional: supporting docs loaded on demand
-    lib/                  # Optional: shared code for scripts
+    lib/                  # Optional: shared code for THIS skill's scripts
+                          # (must live inside the skill dir — never a repo-root lib/)
 ```
 
 ### Naming Conventions
@@ -46,7 +47,7 @@ description: {One sentence describing when to use this skill. Include trigger ph
 ## Usage
 
 ```bash
-bash /mnt/skills/user/{skill-name}/scripts/{script}.sh [args]
+bash scripts/{script}.sh [args]
 ```
 
 **Arguments:**
@@ -54,6 +55,14 @@ bash /mnt/skills/user/{skill-name}/scripts/{script}.sh [args]
 
 **Examples:**
 {Show 2-3 common usage patterns}
+
+> **Path rule:** always reference scripts relative to the skill directory
+> (`scripts/...`, `references/...`). Never hardcode absolute install paths
+> such as `/mnt/skills/user/...` or `~/.claude/skills/...` inside SKILL.md or
+> any script. A skill must work when the user has installed **only that one
+> skill**, wherever it happens to live. Scripts locate their own files with
+> `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` (bash) or
+> `Path(__file__)` (python), never by assuming a fixed location.
 
 ## Output
 

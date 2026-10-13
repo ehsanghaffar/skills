@@ -105,6 +105,22 @@ class PersianDocValidator:
         all_text = []
         validation_results = []
 
+        # Section-level RTL: a Persian document must carry <w:bidi/> in its
+        # section properties. Without it Word opens the file LTR no matter
+        # what the paragraphs say — and python-docx's `section.direction`
+        # assignment is a silent no-op, so generators have to write the XML.
+        W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+        try:
+            sectPr = doc.sections[0]._sectPr
+            if sectPr.find(W + 'bidi') is None:
+                self.issues.append({
+                    'type': 'section_ltr',
+                    'message': 'Document sections lack <w:bidi/> — Word will open this file LTR',
+                    'context': file_path,
+                })
+        except (AttributeError, IndexError):
+            pass
+
         # Check paragraphs
         for i, para in enumerate(doc.paragraphs):
             text = para.text

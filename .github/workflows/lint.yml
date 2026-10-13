@@ -1,0 +1,60 @@
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up shellcheck
+        uses: lfgroup/setup-shellcheck@v1
+        with:
+          shellcheck-version: "v0.10.0"
+
+      - name: Validate SKILL.md frontmatter
+        run: python3 scripts/lint/frontmatter-validate.py
+
+      - name: Validate eval JSON
+        run: |
+          for f in skills/*/evals/evals.json skills/*/evals.json; do
+            [[ -f "$f" ]] || continue
+            python3 -m json.tool "$f" >/dev/null
+          done
+
+      - name: Lint bash scripts
+        run: |
+          find skills -name '*.sh' -print0 | xargs -0 shellcheck --severity=warning
+
+      - name: Syntax-check bash
+        run: |
+          for f in $(find skills -name '*.sh'); do
+            bash -n "$f"
+          done
+
+      - name: Byte-compile python
+        run: |
+          find skills -name '*.py' -not -path '*__pycache__/*' \
+            -print0 | xargs -0 python3 -m py_compile
+
+      - name: Enforce isolation contract
+        run: bash scripts/lint/isolation-check.sh
+
+      - name: Verify README is in sync
+        run: |
+          # Snapshot the current README, regenerate, and fail if anything moved.
+          cp README.md /tmp/README.expected
+          GITHUB_REPO=ehsanghaffar/skills bash scripts/skills-list.sh
+          ! diff -q README.md /tmp/README.expected >/dev/null \
+            && { echo "::error::README.md is out of sync — run \`bash scripts/skills-list.sh\` and commit"; exit 1; } \
+            || echo "✅ README is in sync"

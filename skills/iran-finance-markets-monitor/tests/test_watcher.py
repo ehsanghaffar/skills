@@ -47,3 +47,15 @@ def test_exact_table_row_matching_avoids_keyword_collisions():
             return [Row(["دلار نیما", "1"]), Row(["دلار", "2"])]
 
     assert WATCHER.parse_table_row(Table(), ["دلار"]) == ["دلار", "2"]
+
+
+def test_freshness_gate_accepts_recent_and_rejects_old_dates():
+    today = WATCHER.jdatetime.date(1403, 2, 12)
+    assert WATCHER.validate_freshness("۱۴۰۳/۰۲/۱۲", today) == (True, "today")
+    ok, reason = WATCHER.validate_freshness("1403/02/10", today)
+    assert ok and reason == "2days"
+    ok, reason = WATCHER.validate_freshness("1403/02/09", today)
+    assert not ok and "exceeds" in reason
+    assert WATCHER.validate_freshness("بدون تاریخ", today)[0] is False
+    # a future date is just as untrustworthy as an old one
+    assert WATCHER.validate_freshness("1403/02/15", today)[0] is False

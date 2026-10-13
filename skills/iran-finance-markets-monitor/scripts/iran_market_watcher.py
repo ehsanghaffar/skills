@@ -206,14 +206,53 @@ def fetch_market_data() -> dict[str, Any]:
         html = request_text("https://www.tgju.org/")
         if BeautifulSoup is None:
             raise RuntimeError("beautifulsoup4 is required")
-        tables = BeautifulSoup(html, "html.parser").find_all("table")
-        if len(tables) <= 14:
-            raise ValueError(f"TGJU returned {len(tables)} tables; expected at least 15")
-        for index, labels, field in ((14, ("دلار",), "usd_free"), (14, ("یورو",), "eur"), (14, ("درهم",), "aed"), (10, ("سکه امامی",), "sekkeh_emami"), (5, ("طلای 18 عیار", "طلای ۱۸ عیار"), "gold_18k")):
-            row = parse_table_row(tables[index], labels)
-            price = rial_to_toman(row[1]) if row and len(row) > 1 else None
-            if price is not None:
-                set_validated_price(data, "iran_fx_gold", field, price, f"TGJU table {index}")
+        soup = BeautifulSoup(html, "html.parser")
+        tables = soup.find_all("table")
+
+        # Freshness gate (references/market-data-sources.md): TGJU dates are
+        # accepted today through two days old. Take the most recent Jalali
+        # date visible on the page as its update marker.
+        fresh = True
+        page_dates = re.findall(r"\d{4}\s*[/\-]\s*\d{1,2}\s*[/\-]\s*\d{1,2}", normalize_digits(soup.get_text(" ")))
+        if page_dates and jdatetime is not None:
+            today_jalali = jdatetime.date.fromgregorian(date=now_tehran().date())
+            newest = None
+            for candidate in page_dates:
+                ok, _ = validate_freshness(candidate, today_jalali)
+                if ok:
+                    newest = candidate
+                    break
+            if newest is None:
+                fresh = False
+                data["errors"].append({"source": "TGJU", "type": "freshness", "detail": f"no date within 2 days found on page (dates seen: {page_dates[:3]})"})
+        elif not page_dates:
+            data["warnings"].append("TGJU page carries no parseable date; freshness unverified")
+
+        def scrape_field(field: str, labels: tuple[str, ...], primary: int, fallback: int | None) -> None:
+            """Exact-table, exact-label lookup. Never falls back to a
+            neighbouring table; missing primary -> optional documented
+            fallback -> schema error with the field left null."""
+            if not fresh:
+                return
+            candidates = [primary] if fallback is None else [primary, fallback]
+            for index in candidates:
+                if index >= len(tables):
+                    continue
+                row = parse_table_row(tables[index], labels)
+                if row and len(row) > 1:
+                    price = rial_to_toman(row[1])
+                    if price is not None:
+                        set_validated_price(data, "iran_fx_gold", field, price, f"TGJU table {index}")
+                        return
+                    break
+            data["errors"].append({"source": "TGJU", "type": "schema", "detail": f"label {labels[0]!r} not found in table(s) {candidates} of {len(tables)}"})
+
+        scrape_field("usd_free", ("دلار",), 14, None)
+        scrape_field("eur", ("یورو",), 14, None)
+        scrape_field("aed", ("درهم",), 14, None)
+        scrape_field("sekkeh_emami", ("سکه امامی",), 10, 0)
+        scrape_field("gold_18k", ("طلای 18 عیار", "طلای ۱۸ عیار"), 5, 0)
+
         if len(tables) > 33:
             mids = []
             for row in tables[33].find_all("tr"):
@@ -245,7 +284,7 @@ def fetch_market_data() -> dict[str, Any]:
         for anchor in soup.find_all("a", href=re.compile(r"/news/")):
             title = anchor.get_text(" ", strip=True)
             if len(title) >= 10:
-                data["news"].append({"title": title, "source": "TGJU crypto news", "impact": "medium", "url": urljoin("https://www.tgju.org", anchor.get("href", ""))})
+                data["news"].append({"title": title, "source": "TGJU crypto news", "url": urljoin("https://www.tgju.org", anchor.get("href", ""))})
                 if len(data["news"]) == 3:
                     break
     except Exception as exc:
@@ -253,11 +292,14 @@ def fetch_market_data() -> dict[str, Any]:
     if not data["news"] and feedparser is not None:
         try:
             feed = feedparser.parse("https://cointelegraph.com/rss")
-            data["news"] = [{"title": entry.title, "source": "Cointelegraph RSS", "impact": "medium", "url": entry.link} for entry in feed.entries[:3] if getattr(entry, "title", None)]
+            data["news"] = [{"title": entry.title, "source": "Cointelegraph RSS (fallback)", "url": entry.link} for entry in feed.entries[:3] if getattr(entry, "title", None)]
         except Exception as exc:
             data["errors"].append({"source": "Cointelegraph RSS", "type": "network", "detail": str(exc)})
     elif not data["news"]:
-        data["warnings"].append("No news source available")
+        if feedparser is None:
+            data["warnings"].append("feedparser not installed: RSS news fallback unavailable (install the bundled requirements)")
+        else:
+            data["warnings"].append("No news source available")
     data["news"] = data["news"][:3]
     data["status"] = "ok" if not data["errors"] else "partial"
     return data

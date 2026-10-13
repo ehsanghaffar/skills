@@ -1,6 +1,6 @@
 # Digikala Marketplace API - Complete Endpoint Reference
 
-Generated from OpenAPI spec (274 endpoints). This is a reference for all available endpoints.
+Generated from OpenAPI spec (274 operations across 242 paths — the full machine-readable schema is [`spec.yml`](../spec.yml)). This is a reference for all available endpoints.
 
 ## Authentication (5)
 - GET  `/auth/scopes` - List all defined scopes
@@ -93,10 +93,7 @@ Check `/auth/scopes/{client_code}` for your application's available scopes.
 - 500 - Server error
 
 ## Rate Limits
-Default limits apply per endpoint. Response headers:
-- `X-RateLimit-Limit` - Request limit
-- `X-RateLimit-Remaining` - Remaining requests
-- `X-RateLimit-Reset` - Unix timestamp for reset
+Default limits apply per endpoint. Rate-limit responses carry a `reset_time` field (seconds until the window resets) — the API does not use `X-RateLimit-*` headers.
 
 ## Sandbox Environment
 For development: https://github.com/salimousavi/seller_service_sandbox

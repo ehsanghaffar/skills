@@ -522,8 +522,22 @@ class ResumeDocxGenerator:
         self._setup(font)
 
     def _setup(self, font: str) -> None:
+        # python-docx has no `section.direction` property — assigning one is
+        # silently a no-op. The real section-level RTL switch is <w:bidi/> in
+        # the section properties (paragraphs get their own w:bidi elsewhere).
+        # CT_SectPr fixes element order: w:bidi must come before
+        # w:docGrid/w:printerSettings, so it cannot simply be appended.
         section = self.doc.sections[0]
-        section.direction = 1  # RTL
+        sectPr = section._sectPr
+        for existing in sectPr.findall(qn('w:bidi')):
+            sectPr.remove(existing)
+        bidi = parse_xml(f'<w:bidi {nsdecls("w")}/>')
+        _after = ('w:docGrid', 'w:printerSettings')
+        anchor = next((c for c in sectPr if c.tag == qn(_after[0]) or c.tag == qn(_after[1])), None)
+        if anchor is not None:
+            anchor.addprevious(bidi)
+        else:
+            sectPr.append(bidi)
         section.top_margin = Cm(2)
         section.bottom_margin = Cm(2)
         section.left_margin = Cm(2.5)

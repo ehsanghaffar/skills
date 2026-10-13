@@ -1,73 +1,31 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-BASE_URL="https://seller.digikala.com/open-api/v1"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=_common.sh
+source "$SCRIPT_DIR/_common.sh"
 
-# Token must be provided via DIGIKALA_ACCESS_TOKEN environment variable
-# or ~/.digikala/token file (user-managed)
-get_access_token() {
-    if [[ -n "${DIGIKALA_ACCESS_TOKEN:-}" ]]; then
-        echo "${DIGIKALA_ACCESS_TOKEN}"
-        return 0
-    fi
-    
-    local token_file="${HOME}/.digikala/token"
-    if [[ -f "$token_file" ]]; then
-        cat "$token_file"
-        return 0
-    fi
-    
-    echo "Error: No access token found." >&2
-    echo "Provide token via DIGIKALA_ACCESS_TOKEN env var or ~/.digikala/token file" >&2
-    exit 1
-}
-
-get_auth_header() {
-    local token=$(get_access_token)
-    echo "Authorization: Bearer $token"
-}
-
-api_request() {
-    local method="$1"
-    local endpoint="$2"
-    local data="$3"
-    local content_type="${4:-application/json}"
-    
-    local auth_header=$(get_auth_header)
-    
-    if [[ -n "$data" ]]; then
-        curl -s -X "$method" \
-            -H "Content-Type: $content_type" \
-            -H "$auth_header" \
-            -d "$data" \
-            "$BASE_URL$endpoint"
-    else
-        curl -s -X "$method" \
-            -H "Content-Type: $content_type" \
-            -H "$auth_header" \
-            "$BASE_URL$endpoint"
-    fi
-}
+require_cmds curl
 
 case "${1:-}" in
     tree)
         parent_id="${2:-}"
         if [[ -n "$parent_id" ]]; then
-            api_request GET "/categories/tree?search[parent_id]=$parent_id"
+            api_request GET "/categories/tree" "" "" "search[parent_id]=$parent_id"
         else
             api_request GET "/categories/tree"
         fi
         ;;
-    
+
     search)
         keyword="${2:-}"
         if [[ -z "$keyword" ]]; then
             echo "Usage: $0 search <keyword>" >&2
             exit 1
         fi
-        api_request GET "/product-creation/search/category/v2/$keyword"
+        api_request GET "/product-creation/search/category/v2/$(urlencode "$keyword")"
         ;;
-    
+
     validate)
         category_id="${2:-}"
         if [[ -z "$category_id" ]]; then
@@ -76,7 +34,7 @@ case "${1:-}" in
         fi
         api_request GET "/product-creation/category/$category_id/validation"
         ;;
-    
+
     *)
         echo "Usage: $0 {tree|search|validate} [args]" >&2
         echo "  tree [parent_id]          - Get category tree (root or children)" >&2

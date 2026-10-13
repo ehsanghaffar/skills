@@ -1,7 +1,7 @@
 ---
 name: obsidian-doc-workflow
 description: Create, update, classify, and archive Obsidian documentation documents following structured vault conventions and templates.
-version: 1.0.2
+version: 1.0.3
 ---
 
 # Obsidian Documentation Workflow
@@ -35,13 +35,13 @@ Use the project root template. Always start with `Project Overview.md` in the pr
 ├── Deployment & Infrastructure.md
 ├── Maintenance Board.md
 ├── Changelog.md
-└── <Architecture>, <Services>, <Database>, <Guides>, etc.
+└── <Architecture>, <Services>, <Database>, <Guides>, 等。
 ```
 
 **Standard frontmatter:**
 ```yaml
 ---
-type: project|architecture|guide|reference|research|runbook|maintenace|changelog
+type: project|architecture|guide|reference|research|runbook|maintenance|changelog
 project: "Project Name"
 status: active|archived|deprecated
 area: frontend|backend|infra|security|testing|devops
@@ -118,7 +118,7 @@ Respective templates in `00 Meta/Templates/`:
 Tags are lowercase, kebab-case, max 5 tags per document.
 
 **Categories:**
-- Technology: `nextjs`, `typescript`, `prisma`, `turborepo`, `ltit-tool`
+- Technology: `nextjs`, `typescript`, `prisma`, `turborepo`, `lti-tool`
 - Domain: `architecture`, `security`, `testing`, `deployment`, `frontend`, `backend`
 - Type: `adr`, `guide`, `reference`, `research`, `runbook`, `concept`, `tool`
 - Status: `active`, `archived`, `deprecated`, `draft`
@@ -164,178 +164,22 @@ When content is obsolete or superseded:
 
 ## Special Guardrails
 
-- Never delete content without archiving first
-- Never rewrite technical content for flavor/style only
-- Never create empty documents just to satisfy structure
-- Always keep `00 Meta/Templates/` as canonical source for document structures
+- Do not delete content without archiving first
+- Do not rewrite technical content for flavor/style only
+- Do not create empty documents just to satisfy structure
+- Always keep `00 Meta/Templates/` as the authoritative source for document structures
 - All documents use English primarily; Persian content is translated/summarized in English
 - Frontmatter property order: `type` → `status` → `project` (project-scoped) → `area` → `created` → `updated` → `tags` → additional fields
 
----
+## Using the reference files
 
-# Obsidian 文档工作流
+This skill’s core logic lives above; the six reference documents contain the detailed rules. Open them when you need to:
 
-此技能按照严格的文档规范和模板管理 Obsidian 仓库的结构化文档。
+- **references/archive-rules.md** — When you need to archive content (see “Archive Process” above). This file defines the archival workflow and the three destinations (Deprecated, Superseded, Historical) with examples of what belongs in each.
+- **references/classification-guide.md** — When you are unsure whether a piece of knowledge belongs in `01 Projects/` or `02 Shared Knowledge/`. Read this guide first; it gives the decision framework and examples that clarify the boundary.
+- **references/document-types.md** — When you need to know which frontmatter fields are required for a given document type (project, guide, reference, etc.) or which template to use. This document enumerates every supported type with its required frontmatter and the canonical template.
+- **references/linking-conventions.md** — When you are creating or reviewing links. This file defines the three link flavors (simple Wikilink, cross-folder, deep link) and warns against navigation pages; it also gives the preferred styles for headings and anchors so links stay stable.
+- **references/tagging-conventions.md** — When you are assigning tags to a new document. This reference lists the controlled vocabularies for technology, domain, type, status, and project tags, and shows how to combine them to stay within the five-tag limit.
+- **references/vault-structure.md** — When you are setting up a new vault or auditing an existing one. This document recaps the three-top-level-section layout (`00 Meta/`, `01 Projects/`, `02 Shared Knowledge/`) and explains why each section exists, plus the naming conventions for folders and files inside them.
 
-## 仓库路径
-
-解析后的仓库路径通常为：
-${OBSIDIAN_VAULT_PATH:-/Users/${USER}/.obsidian}
-
-仓库使用三个主要部分：
-- `01 Projects/` - 项目专用文档
-- `02 Shared Knowledge/` - 可复用的工程模式
-- `00 Meta/` - 仓库标准、模板和指导
-
-## 文档创建
-
-### 项目文档
-
-使用项目根模板。始终从项目根目录的 `Project Overview.md` 开始，然后是架构、指南、API 参考，依此类推。
-
-**示例项目结构：**
-```
-01 Projects/{Project}/
-├── Project Overview.md
-├── Architecture & Tech Stack.md
-├── Development Guide.md
-├── Component & API Reference.md
-├── Testing Guide.md
-├── Deployment & Infrastructure.md
-├── Maintenance Board.md
-├── Changelog.md
-└── <Architecture>, <Services>, <Database>, <Guides>, 等。
-```
-
-**标准 frontmatter：**
-```yaml
----
-type: project|architecture|guide|reference|research|runbook|maintenance|changelog
-project: "项目名称"
-status: active|archived|deprecated
-area: frontend|backend|infra|security|testing|devops
-created: 2026-09-19
-updated: 2026-09-19
-tags: [project-slug, area, type]
-related_projects: []
----
-```
-
-### 共享知识文档
-
-使用 `Concept.md` 或 `Tool.md` 模板。
-
-**标准 frontmatter：**
-```yaml
----
-type: concept|tool|architecture|guide
-status: active|archived
-area: patterns|frontend|backend|testing|devops
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-tags: [category, subcategory, type]
-related_projects: [项目 A, 项目 B]
----
-```
-
-## 分类规则
-
-### 项目 vs 共享知识
-
-- **项目知识** → `01 Projects/{Project}/`（项目消失时变为过期）
-- **可复用模式** → `02 Shared Knowledge/`（项目消失后仍然有用）
-
-### 归属分类
-
-- 项目专用实现 → 项目文件夹
-- 一般模式、技术指南、安全实践、部署策略 → 共享知识
-- 外部参考 → `03 Resources/`
-
-**示例：**
-- `Backend Integration Guide`（专用于某个项目）→ 项目文件夹
-- `Monorepo 模式`（任何团队均可使用）→ 共享知识
-- `Vercel 部署文档` → Resources
-
-## 模板
-
-各模板位于 `00 Meta/Templates/`：
-- `Project Overview.md`
-- `Architecture.md`
-- `Development Guide.md`
-- `Technical Guide.md`
-- `API Reference.md`
-- `Testing Guide.md`
-- `Deployment & Infrastructure.md`
-- `ADR.md`
-- `Decision.md`
-- `Research.md`
-- `Concept.md`
-- `Tool.md`
-- `Runbook.md`
-- `Maintenance Item.md`
-- `Resource.md`
-
-## 链接规则
-
-- 使用 Wikilinks `[[文档名称]]` 进行内部链接
-- 跨文件夹链接：`[[文件夹/文档名称]]`
-- 深度链接：`[[文档名称#章节标题]]`
-- 不要创建大型导航页 — 通过链接构建知识图谱
-
-## 标签约定
-
-标签为小写，kebab-case，每个文档最多5个标签。
-
-**类别：**
-- 技术：`nextjs`、`typescript`、`prisma`、`turborepo`、`lti`
-- 领域：`architecture`、`security`、`testing`、`deployment`、`frontend`、`backend`
-- 类型：`adr`、`guide`、`reference`、`research`、`runbook`、`concept`、`tool`
-- 状态：`active`、`archived`、`deprecated`、`draft`
-- 项目：`project-one`、`project-two`、`talkway.ir`
-
-## 创建新文档
-
-按此顺序操作：
-1. 确定文档类型和位置（项目 vs 共享知识）
-2. 使用 `00 Meta/Templates/` 中相应的模板
-3. 用当前日期填写所有必需的 frontmatter
-4. 按模板定义的结构编写内容
-5. 链接到相关文档（适当时双向链接）
-6. 放入正确的文件夹
-
-## 验证创建的文档
-
-在考虑文档完成之前：
-
-- [ ] Frontmatter 完整准确（所有必需字段存在）
-- [ ] 标题与文件名匹配（不带扩展名）
-- [ ] 结构遵循文档模板
-- [ ] 所有内部 wikilinks 可解析
-- [ ] 外部链接有描述性文本
-- [ ] 无损坏的 wikilinks
-- [ ] 有 1 个领域标签和 1 个文档类型标签
-- [ ] 代码块指定语言
-- [ ] 更新日期反映当前日期
-- [ ] 无通用中文消息或占位符
-
-## 归档流程
-
-当内容过期或被取代时：
-
-1. 将文件移动到 `04 Archives/Deprecated/`、`Superseded/` 或 `Historical/`（视情况而定）
-2. 将 `status` 更改为 `archived` 或 `deprecated`
-3. 在新/取代文档中添加链接
-
-**归档目的地：**
-- Deprecated → 过时的技术、过时的模式、已弃用的工具
-- Superseded → 被新版本或合并文档取代
-- Historical → 已完成的审查、旧决策、过时的快照
-
-## 特殊防护规则
-
-- 除非归档，否则永远不要删除内容
-- 不要仅为了风格重写技术内容
-- 不要由于满足结构而创建空文档
-- 始终将 `00 Meta/Templates/` 视为文档结构的权威来源
-- 所有文档主要使用英文；波斯语内容翻译/总结为英文
-- Frontmatter 属性顺序：`type` → `status` → `project`（项目范围）→ `area` → `created` → `updated` → `tags` → 额外字段
+These references are not optional reading; they are the detailed rules that the skill’s checklists above summarize. Treat the skill as the router and the references as the manuals.
