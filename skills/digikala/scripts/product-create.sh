@@ -189,7 +189,7 @@ case "${1:-}" in
     *)
         echo "Usage: $0 {search|suggest|be-seller|search-category|validate-category|validate-detail|draft-count|get-draft|auto-title|save-title|get-attributes|validate-attributes|save-product|assign|brand-request} [args]" >&2
         echo "" >&2
-        echo "Authentication: Set DIGIKALA_ACCESS_TOKEN env var or create ~/.digikala/token file" >&2
+        echo "Authentication: export DIGIKALA_ACCESS_TOKEN=<token>, or point DIGIKALA_TOKEN_FILE at a file you choose" >&2
         echo "Non-interactive dangerous ops: set DIGIKALA_CONFIRM=1 (otherwise they are refused when stdin is not a terminal)" >&2
         exit 1
         ;;

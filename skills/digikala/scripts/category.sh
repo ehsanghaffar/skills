@@ -41,7 +41,7 @@ case "${1:-}" in
         echo "  search <keyword>          - Search categories by keyword" >&2
         echo "  validate <category_id>    - Validate category for product creation" >&2
         echo "" >&2
-        echo "Authentication: Set DIGIKALA_ACCESS_TOKEN env var or create ~/.digikala/token file" >&2
+        echo "Authentication: export DIGIKALA_ACCESS_TOKEN=<token>, or point DIGIKALA_TOKEN_FILE at a file you choose" >&2
         exit 1
         ;;
 esac

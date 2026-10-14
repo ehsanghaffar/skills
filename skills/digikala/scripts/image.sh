@@ -53,7 +53,7 @@ case "${1:-}" in
         echo "  upload-brand <file>       - Upload brand logo image" >&2
         echo "  ai-check <image_id> [is_main] - AI quality check on uploaded image" >&2
         echo "" >&2
-        echo "Authentication: Set DIGIKALA_ACCESS_TOKEN env var or create ~/.digikala/token file" >&2
+        echo "Authentication: export DIGIKALA_ACCESS_TOKEN=<token>, or point DIGIKALA_TOKEN_FILE at a file you choose" >&2
         exit 1
         ;;
 esac

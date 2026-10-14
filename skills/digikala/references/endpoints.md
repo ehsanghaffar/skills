@@ -1,8 +1,15 @@
 # Digikala Marketplace API - Complete Endpoint Reference
 
-Generated from OpenAPI spec (274 operations across 242 paths — the full machine-readable schema is [`spec.yml`](../spec.yml)). This is a reference for all available endpoints.
+Reference for all 274 available operations. This document is documentation only —
+**the skill ships no script that calls the token endpoints or any endpoint outside
+the Product Creation, Category, and Image groups.** Treat the sections below as
+background; the scripts in `scripts/` are the actual supported surface.
 
-## Authentication (5)
+> **Credential note:** the endpoints under "Authentication" mint and revoke the
+> seller access token. They are listed here for orientation only. Never call them
+> from an agent session, and never use this skill to obtain a token.
+
+## Authentication (5) — not called by this skill
 - GET  `/auth/scopes` - List all defined scopes
 - GET  `/auth/scopes/{client_code}` - List scopes available for your application
 - POST `/auth/token` - Generate access and refresh token (requires authorization_code)
@@ -33,43 +40,49 @@ Generated from OpenAPI spec (274 operations across 242 paths — the full machin
 - POST `/product-creation/assign` - Assign product to seller
 - POST `/product-creation/brand/request` - Create brand request
 
-## Product Management (additional endpoints in full spec)
-The full spec includes additional endpoints for:
+## Product Management (not wrapped by this skill)
+Digikala also exposes endpoints for:
 - Product variants and pricing
 - Inventory management
 - Product status updates
 - Bulk operations
 - Product archiving
 
-## Orders
+## Orders — out of scope
 - Order listing and filtering
 - Order details
 - Order status updates
 - Invoice generation
 - Return/cancellation handling
 
-## Shipments
+These expose customer personal data and drive fulfilment. This skill does not
+call them. If a request needs them, stop and tell the user.
+
+## Shipments — out of scope
 - Shipment creation
 - Label printing
 - Tracking updates
 - Pickup scheduling
 
-## Finance
+## Finance — out of scope
 - Settlement reports
 - Transaction history
 - Payout management
 - Fee breakdowns
 
-## Customer Service
+## Customer Service — out of scope
 - Ticket management
 - Message threads
 - Response templates
 
-## Store Settings
+## Store Settings — out of scope
 - Store profile
 - Shipping settings
 - Payment methods
 - Notification preferences
+
+The full spec also covers seller identity and PII (addresses, business
+documents, warehouse details). This skill does not call those endpoints.
 
 ## Scopes Reference
 Each endpoint requires specific scopes. Common scopes:
